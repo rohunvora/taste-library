@@ -8,9 +8,12 @@
     "build": "tsc",
     "organize": "tsc && node dist/index.js",
     "organize:apply": "tsc && node dist/index.js --apply",
-    "classify": "tsc && node dist/manual-classifier.js"
+    "classify": "tsc && node dist/manual-classifier.js",
+    "taste-profile": "tsc && node dist/taste-profile.js",
+    "ab-test": "tsc && node dist/ab-test.js"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
     "are.na": "^0.1.5",
     "dotenv": "^16.3.1"
   },
