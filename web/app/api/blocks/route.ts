@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
-const ARENA_TOKEN = process.env.ARENA_TOKEN!
-const ARENA_USER_SLUG = process.env.ARENA_USER_SLUG || 'frank-degods'
+const ARENA_TOKEN = process.env.ARENA_TOKEN
+const ARENA_USER_SLUG = process.env.ARENA_USER_SLUG
 
 // Default category channels
 const DEFAULT_CHANNELS = ['UI/UX', 'Writing', 'Code', 'Frameworks']
@@ -41,7 +41,8 @@ async function arenaFetch(endpoint: string) {
     },
   })
   if (!res.ok) {
-    throw new Error(`Are.na API error: ${res.status}`)
+    const errBody = await res.text().catch(() => 'no body')
+    throw new Error(`Are.na API error: ${res.status} ${res.statusText} - ${errBody.slice(0, 100)}`)
   }
   return res.json()
 }
@@ -59,8 +60,18 @@ async function getChannelBlocks(slug: string, limit: number = 100): Promise<Aren
 
 export async function GET() {
   try {
+    // Check environment variables
     if (!ARENA_TOKEN) {
-      return NextResponse.json({ error: 'ARENA_TOKEN not configured' }, { status: 500 })
+      return NextResponse.json({ 
+        error: 'ARENA_TOKEN not configured',
+        debug: { tokenExists: false, slugExists: !!ARENA_USER_SLUG }
+      }, { status: 500 })
+    }
+    if (!ARENA_USER_SLUG) {
+      return NextResponse.json({ 
+        error: 'ARENA_USER_SLUG not configured',
+        debug: { tokenExists: true, slugExists: false }
+      }, { status: 500 })
     }
 
     const channels = await getChannels()
@@ -145,7 +156,14 @@ export async function GET() {
   } catch (error) {
     console.error('Error fetching blocks:', error)
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Unknown error' },
+      { 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        debug: { 
+          tokenExists: !!ARENA_TOKEN,
+          slugExists: !!ARENA_USER_SLUG,
+          slug: ARENA_USER_SLUG 
+        }
+      },
       { status: 500 }
     )
   }
