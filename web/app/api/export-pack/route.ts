@@ -183,126 +183,39 @@ function generateDesignSpec(
   antiPatterns: string[],
   distinctiveFeatures: Map<number, DistinctiveFeature>
 ): string {
-  let spec = `# Design Spec for Your Build\n\n`;
-  spec += `Generated from ${imageCount} screenshot(s) matched against your Are.na UI/UX references.\n\n`;
-
-  // Tags summary
+  // Tags summary - concise header
   const allTags = [
     ...(extractedTags.component || []),
     ...(extractedTags.style || []),
     ...(extractedTags.context || []),
     ...(extractedTags.vibe || []),
   ];
-  spec += `**What you're building:** ${allTags.join(', ')}\n\n`;
-
-  spec += `---\n\n`;
-
-  // Extract specific values from style guide
-  if (styleGuide) {
-    spec += `## Design Tokens (from your taste profile)\n\n`;
-    
-    // Colors
-    spec += `### Colors\n`;
-    const colors = styleGuide.common.colors;
-    if (colors.background_primary && colors.background_primary !== '#N/A') {
-      spec += `- **Background:** ${colors.background_primary}\n`;
-    }
-    if (colors.background_card && colors.background_card !== '#N/A') {
-      spec += `- **Card surface:** ${colors.background_card}\n`;
-    }
-    if (colors.text_primary && colors.text_primary !== '#N/A') {
-      spec += `- **Text primary:** ${colors.text_primary}\n`;
-    }
-    if (colors.text_secondary && colors.text_secondary !== '#N/A') {
-      spec += `- **Text secondary:** ${colors.text_secondary}\n`;
-    }
-    if (colors.accent_primary && colors.accent_primary !== '#N/A') {
-      spec += `- **Accent (CTAs only):** ${colors.accent_primary}\n`;
-    }
-    spec += `\n`;
-
-    // Typography
-    spec += `### Typography\n`;
-    const typo = styleGuide.common.typography;
-    spec += `- **Font vibe:** ${typo.family_vibe || 'system'}\n`;
-    spec += `- **Heading weight:** ${typo.heading_weight || '600'}\n`;
-    spec += `- **Body weight:** ${typo.body_weight || '400'}\n`;
-    spec += `- **Size hierarchy:** ${typo.size_hierarchy || 'moderate'}\n`;
-    spec += `\n`;
-
-    // Spacing & Borders
-    spec += `### Spacing & Shape\n`;
-    const spacing = styleGuide.common.spacing;
-    const borders = styleGuide.common.borders;
-    spec += `- **Density:** ${spacing.density || 'balanced'}\n`;
-    spec += `- **Card padding:** ${spacing.card_padding || 'medium'}\n`;
-    spec += `- **Border radius:** ${borders.radius_px || 12}px (${borders.radius_category || 'rounded'})\n`;
-    spec += `- **Border usage:** ${borders.border_usage || 'subtle'}\n`;
-    spec += `\n`;
-
-    // Elevation
-    spec += `### Elevation\n`;
-    const elevation = styleGuide.common.elevation;
-    spec += `- **Shadows:** ${elevation.shadow_presence || 'subtle'}\n`;
-    spec += `- **Layering:** ${elevation.layering || 'flat'}\n`;
-    spec += `\n`;
-
-    // Motion
-    spec += `### Motion\n`;
-    const motion = styleGuide.common.motion;
-    spec += `- **Transitions:** ${motion.duration_ms || 200}ms ${motion.easing || 'ease-out'}\n`;
-    spec += `- **Hover effect:** ${motion.hover_effect || 'lift'}\n`;
-    spec += `\n`;
-  }
-
-  spec += `---\n\n`;
-
-  // Reference images with distinctive features
-  spec += `## Attached Reference Images\n\n`;
-  spec += `**How to use:** Attach these images to your Cursor/Claude conversation so the AI can actually SEE them.\n\n`;
+  let spec = `## Reference Images for: ${allTags.slice(0, 6).join(', ')}\n\n`;
 
   matches.forEach((match, i) => {
-    const priority = i === 0 ? 'PRIMARY - match this 80%' : i === 1 ? 'SECONDARY - borrow specific elements' : 'TERTIARY - for additional context';
+    const priority = i === 0 ? 'PRIMARY (match this 80%)' : i === 1 ? 'SECONDARY' : 'CONTEXT';
     const filename = `ref-${i + 1}-${sanitizeFilename(match.block.one_liner)}.${getImageExtension(match.block.image_url || '')}`;
     
-    spec += `### ${filename}\n`;
-    spec += `**Priority:** ${priority}\n`;
-    spec += `**What it shows:** ${match.block.one_liner}\n`;
-    spec += `**Match score:** ${Math.round(match.score * 10)}% (${[...match.matchedTags.component, ...match.matchedTags.style].join(', ')})\n`;
+    spec += `### ${filename} [${priority}]\n`;
+    spec += `${match.block.one_liner}\n`;
     
-    // Add distinctive features if available
+    // Add distinctive features if available - this is the valuable part
     const features = distinctiveFeatures.get(match.block.id);
     if (features) {
-      spec += `\n**What stands out:** ${features.what_stands_out}\n`;
-      spec += `**Specific values observed:**\n`;
+      spec += `\n**Key details:**\n`;
       features.specific_values.forEach(v => {
-        spec += `  - ${v}\n`;
+        spec += `- ${v}\n`;
       });
-      spec += `**Borrow this:** ${features.borrow_this}\n`;
+      spec += `\n**Borrow:** ${features.borrow_this}\n`;
     }
     
-    spec += `\n---\n\n`;
+    spec += `\n`;
   });
 
-  // Anti-patterns section
+  // Anti-patterns section - compact
   if (antiPatterns.length > 0) {
-    spec += `## DO NOT (based on your taste profile)\n\n`;
-    antiPatterns.forEach(pattern => {
-      spec += `- ❌ ${pattern}\n`;
-    });
-    spec += `\n`;
+    spec += `---\n\n**Avoid:** ${antiPatterns.join(' · ')}\n`;
   }
-
-  // Usage instructions
-  spec += `---\n\n`;
-  spec += `## How to Use This Pack\n\n`;
-  spec += `1. **Attach all ref-*.{jpg,png} images** to your Cursor/Claude conversation\n`;
-  spec += `2. **Paste this spec** as context\n`;
-  spec += `3. **Describe what you want** and reference specific images:\n`;
-  spec += `   - "Make the cards look like ref-1"\n`;
-  spec += `   - "Use the color scheme from ref-2"\n`;
-  spec += `   - "Borrow the nav treatment from ref-3"\n`;
-  spec += `4. **The AI can now SEE the actual designs** instead of just reading descriptions\n`;
 
   return spec;
 }
@@ -385,19 +298,14 @@ export async function POST(request: NextRequest) {
       distinctiveFeatures
     );
 
-    // Add spec to ZIP
-    zip.file('DESIGN_SPEC.md', spec);
+    // Generate ZIP buffer (images only - no MD file needed since we copy spec separately)
+    const zipBuffer = await zip.generateAsync({ type: 'base64' });
 
-    // Generate ZIP buffer
-    const zipBuffer = await zip.generateAsync({ type: 'nodebuffer' });
-
-    // Return as downloadable file
-    return new NextResponse(zipBuffer, {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/zip',
-        'Content-Disposition': 'attachment; filename="reference-pack.zip"',
-      },
+    // Return both ZIP (base64) and spec text for auto-copy
+    return NextResponse.json({
+      zip: zipBuffer,
+      spec: spec,
+      imageCount: downloadResults.filter(r => r.buffer).length,
     });
 
   } catch (error: any) {

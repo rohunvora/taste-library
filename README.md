@@ -103,10 +103,12 @@ cd web && npm run dev
 ```
 
 Features:
-- 📸 Drag-and-drop screenshot upload
+- 📸 Drag-and-drop screenshot upload (supports multiple images)
 - 🏷️ Extracts tags from your WIP using Gemini
 - 🔍 Searches your indexed Are.na blocks by tag similarity
+- 📦 Download reference pack (ZIP with images + spec copied to clipboard)
 - 📋 One-click "Copy for Cursor" exports formatted markdown
+- 📁 Smart filenames: downloads named `refs-{tags}-{timestamp}.zip` for easy organization
 
 The UI itself is styled using the extracted taste profile — proving the system works!
 

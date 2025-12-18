@@ -159,12 +159,43 @@ export default function MatchPage() {
     }
 
     // Create preview URLs and add to state
+    // FIX: Resize large images to avoid stack overflow when JSON.stringify-ing large base64 strings
     const newImages: UploadedImage[] = await Promise.all(
       imageFiles.map(async (file) => {
         const previewUrl = await new Promise<string>((resolve) => {
-          const reader = new FileReader();
-          reader.onload = (e) => resolve(e.target?.result as string);
-          reader.readAsDataURL(file);
+          const img = new Image();
+          img.onload = () => {
+            // Resize if too large (max 1200px on longest side)
+            const MAX_SIZE = 1200;
+            let { width, height } = img;
+            
+            if (width > MAX_SIZE || height > MAX_SIZE) {
+              if (width > height) {
+                height = Math.round((height * MAX_SIZE) / width);
+                width = MAX_SIZE;
+              } else {
+                width = Math.round((width * MAX_SIZE) / height);
+                height = MAX_SIZE;
+              }
+            }
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx?.drawImage(img, 0, 0, width, height);
+            
+            // Use JPEG for smaller size (quality 0.8)
+            resolve(canvas.toDataURL('image/jpeg', 0.8));
+          };
+          img.onerror = () => {
+            // Fallback to original if image loading fails
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target?.result as string);
+            reader.readAsDataURL(file);
+          };
+          // Load image from file
+          img.src = URL.createObjectURL(file);
         });
         
         return {
@@ -319,21 +350,52 @@ export default function MatchPage() {
         }),
       });
 
+      const data = await response.json();
+      
       if (!response.ok) {
-        const data = await response.json();
         throw new Error(data.error || 'Failed to generate pack');
       }
 
-      // Download the ZIP
-      const blob = await response.blob();
+      // Auto-copy spec to clipboard
+      await navigator.clipboard.writeText(data.spec);
+      
+      // Download the ZIP (convert base64 to blob)
+      const binaryString = atob(data.zip);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      const blob = new Blob([bytes], { type: 'application/zip' });
+      
+      // Generate unique filename: refs-{tags}-{YYYYMMDD-HHMM}.zip
+      // e.g. "refs-card-header-minimal-20251218-1430.zip"
+      // Tags come from: 2 component tags + 1 style tag (max 3)
+      const topTags = [
+        ...aggregatedResult.extractedTags.component.slice(0, 2),
+        ...aggregatedResult.extractedTags.style.slice(0, 1),
+      ].slice(0, 3)
+        .map(t => t.toLowerCase().replace(/[^a-z0-9]+/g, '-'))
+        .join('-');
+      
+      const now = new Date();
+      const timestamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
+      
+      const filename = topTags 
+        ? `refs-${topTags}-${timestamp}.zip`
+        : `refs-${timestamp}.zip`;
+      
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'reference-pack.zip';
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
+      
+      // Show success feedback
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
     } catch (err: any) {
       console.error('Export failed:', err);
       alert('Failed to export: ' + err.message);
@@ -688,9 +750,14 @@ export default function MatchPage() {
                         <span style={{ animation: 'spin 1s linear infinite', display: 'inline-block' }}>⏳</span>
                         Generating...
                       </>
+                    ) : copied ? (
+                      <>
+                        <span style={{ color: STYLES.colors.success }}>✓</span>
+                        Spec Copied + ZIP Downloaded
+                      </>
                     ) : (
                       <>
-                        📦 Download Pack
+                        📦 Download + Copy Spec
                       </>
                     )}
                   </button>
