@@ -73,7 +73,46 @@ Output: `taste-profiles/[channel-slug]/index.json`
 
 See [TAGS.md](./TAGS.md) for the full tag taxonomy.
 
-### 4. Archive & Cleanup Scripts
+### 4. Style Extractor
+
+Extracts detailed visual styling properties from your Are.na references.
+
+```bash
+npm run extract-styles -- --channel=your-channel-slug
+```
+
+Analyzes each image for:
+- **Colors**: Background, text, accent, semantic (success/warning/error)
+- **Typography**: Font vibe, weights, hierarchy, letter-spacing
+- **Spacing**: Density, card padding, element gaps
+- **Elevation**: Shadow presence/color, layering approach
+- **Borders**: Radius (exact pixels), usage, divider styles
+- **Icons**: Outlined vs filled, corner style
+
+Groups extractions by context (mobile-app, saas, etc.) and outputs a unified style guide.
+
+Output: `taste-profiles/[channel-slug]/style-guide.json`
+
+### 5. Reference Matcher
+
+A web app that takes your WIP screenshot and finds relevant references from your Are.na.
+
+```bash
+cd web && npm run dev
+# Visit http://localhost:3000/match
+```
+
+Features:
+- 📸 Drag-and-drop screenshot upload
+- 🏷️ Extracts tags from your WIP using Gemini
+- 🔍 Searches your indexed Are.na blocks by tag similarity
+- 📋 One-click "Copy for Cursor" exports formatted markdown
+
+The UI itself is styled using the extracted taste profile — proving the system works!
+
+See [TASTE_IMPLEMENTATION.md](./TASTE_IMPLEMENTATION.md) for how every visual decision traces back to extraction data.
+
+### 6. Archive & Cleanup Scripts
 
 ```bash
 node archive.js   # Move misc blocks to Archive channel
@@ -86,21 +125,28 @@ node cleanup.js   # Empty non-protected channels
 
 ```
 arena-lib/
-├── web/                        # Next.js classifier app
+├── web/                        # Next.js web app
 │   ├── app/
-│   │   ├── page.tsx            # Main UI
-│   │   └── api/                # API routes
+│   │   ├── page.tsx            # Classifier UI
+│   │   ├── match/page.tsx      # Reference Matcher
+│   │   └── api/
+│   │       ├── blocks/         # Fetch blocks
+│   │       ├── classify/       # Classify block
+│   │       └── match/          # Reference matching API
 ├── src/
 │   ├── anti-patterns.ts        # Extract anti-patterns from channel
 │   ├── index-blocks.ts         # Semantically tag blocks for matching
+│   ├── extract-styles.ts       # Extract detailed visual styles
 │   ├── taste-profile.ts        # Generate taste profiles (experimental)
 │   ├── arena-client.ts         # Are.na API wrapper
 │   └── types.ts                # TypeScript types
 ├── taste-profiles/             # Generated outputs per channel (gitignored)
 │   └── [channel-slug]/
 │       ├── anti-rules.md       # Extracted anti-patterns
-│       └── index.json          # Semantic tags for all blocks
+│       ├── index.json          # Semantic tags for all blocks
+│       └── style-guide.json    # Extracted visual styles
 ├── TAGS.md                     # Tag taxonomy documentation
+├── TASTE_IMPLEMENTATION.md     # Traceability log for taste-driven UI
 ├── archive.js                  # Archive script
 ├── cleanup.js                  # Cleanup script
 └── .env                        # Your API keys (not committed)
