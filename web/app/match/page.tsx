@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 
 // ============================================================================
 // STYLE TOKENS (derived from taste-profiles/ui-ux-*/style-guide.json)
@@ -103,61 +103,92 @@ interface MatchResponse {
 // MAIN COMPONENT
 // ============================================================================
 
+interface UploadedImage {
+  id: string;
+  file: File;
+  previewUrl: string;
+  status: 'pending' | 'processing' | 'done' | 'error';
+  result?: MatchResponse;
+  error?: string;
+}
+
 export default function MatchPage() {
   const [isDragging, setIsDragging] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<MatchResponse | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [images, setImages] = useState<UploadedImage[]>([]);
   const [copied, setCopied] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFile = useCallback(async (file: File) => {
-    if (!file.type.startsWith('image/')) {
-      setError('Please upload an image file');
+  const isLoading = images.some(img => img.status === 'processing');
+  const hasResults = images.some(img => img.status === 'done');
+  const error = images.find(img => img.status === 'error')?.error || null;
+
+  const processImage = useCallback(async (image: UploadedImage) => {
+    setImages(prev => prev.map(img => 
+      img.id === image.id ? { ...img, status: 'processing' as const } : img
+    ));
+
+    try {
+      const response = await fetch('/api/match', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: image.previewUrl }),
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to match');
+      }
+
+      setImages(prev => prev.map(img => 
+        img.id === image.id ? { ...img, status: 'done' as const, result: data } : img
+      ));
+    } catch (err: any) {
+      setImages(prev => prev.map(img => 
+        img.id === image.id ? { ...img, status: 'error' as const, error: err.message } : img
+      ));
+    }
+  }, []);
+
+  const handleFiles = useCallback(async (files: FileList | File[]) => {
+    const imageFiles = Array.from(files).filter(f => f.type.startsWith('image/'));
+    
+    if (imageFiles.length === 0) {
       return;
     }
 
-    setError(null);
-    setResult(null);
-    setIsLoading(true);
-
-    // Create preview
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const base64 = e.target?.result as string;
-      setPreviewUrl(base64);
-
-      try {
-        const response = await fetch('/api/match', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image: base64 }),
+    // Create preview URLs and add to state
+    const newImages: UploadedImage[] = await Promise.all(
+      imageFiles.map(async (file) => {
+        const previewUrl = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target?.result as string);
+          reader.readAsDataURL(file);
         });
-
-        const data = await response.json();
         
-        if (!response.ok) {
-          throw new Error(data.error || 'Failed to match');
-        }
+        return {
+          id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+          file,
+          previewUrl,
+          status: 'pending' as const,
+        };
+      })
+    );
 
-        setResult(data);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    reader.readAsDataURL(file);
-  }, []);
+    setImages(prev => [...prev, ...newImages]);
+
+    // Process all new images in parallel
+    newImages.forEach(img => processImage(img));
+  }, [processImage]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
     
-    const file = e.dataTransfer.files[0];
-    if (file) handleFile(file);
-  }, [handleFile]);
+    if (e.dataTransfer.files.length > 0) {
+      handleFiles(e.dataTransfer.files);
+    }
+  }, [handleFiles]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -174,26 +205,78 @@ export default function MatchPage() {
   }, []);
 
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) handleFile(file);
-  }, [handleFile]);
+    if (e.target.files && e.target.files.length > 0) {
+      handleFiles(e.target.files);
+    }
+  }, [handleFiles]);
+
+  const removeImage = useCallback((id: string) => {
+    setImages(prev => prev.filter(img => img.id !== id));
+  }, []);
+
+  // Aggregate all results for combined view
+  const aggregatedResult = useMemo(() => {
+    const completedImages = images.filter(img => img.status === 'done' && img.result);
+    if (completedImages.length === 0) return null;
+
+    // Combine all extracted tags
+    const allExtractedTags = {
+      component: new Set<string>(),
+      style: new Set<string>(),
+      context: new Set<string>(),
+      vibe: new Set<string>(),
+    };
+
+    completedImages.forEach(img => {
+      img.result?.extractedTags.component?.forEach(t => allExtractedTags.component.add(t));
+      img.result?.extractedTags.style?.forEach(t => allExtractedTags.style.add(t));
+      img.result?.extractedTags.context?.forEach(t => allExtractedTags.context.add(t));
+      img.result?.extractedTags.vibe?.forEach(t => allExtractedTags.vibe.add(t));
+    });
+
+    // Combine all matches, dedupe by block id, re-sort by score
+    const matchMap = new Map<number, MatchedBlock>();
+    completedImages.forEach(img => {
+      img.result?.matches.forEach(match => {
+        const existing = matchMap.get(match.block.id);
+        if (!existing || match.score > existing.score) {
+          matchMap.set(match.block.id, match);
+        }
+      });
+    });
+
+    const combinedMatches = Array.from(matchMap.values())
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 8); // Show more when multiple images
+
+    return {
+      extractedTags: {
+        component: Array.from(allExtractedTags.component),
+        style: Array.from(allExtractedTags.style),
+        context: Array.from(allExtractedTags.context),
+        vibe: Array.from(allExtractedTags.vibe),
+      },
+      matches: combinedMatches,
+      imageCount: completedImages.length,
+    };
+  }, [images]);
 
   const generateCursorMarkdown = useCallback(() => {
-    if (!result) return '';
+    if (!aggregatedResult) return '';
 
     const tagsList = [
-      ...(result.extractedTags.component || []),
-      ...(result.extractedTags.style || []),
-      ...(result.extractedTags.context || []),
-      ...(result.extractedTags.vibe || []),
+      ...aggregatedResult.extractedTags.component,
+      ...aggregatedResult.extractedTags.style,
+      ...aggregatedResult.extractedTags.context,
+      ...aggregatedResult.extractedTags.vibe,
     ].map(t => `\`${t}\``).join(', ');
 
     let md = `## UI References for Your WIP\n\n`;
-    md += `**Your screenshot:** ${result.oneLiner}\n`;
-    md += `**Tags:** ${tagsList}\n\n`;
+    md += `**Screenshots analyzed:** ${aggregatedResult.imageCount}\n`;
+    md += `**Combined tags:** ${tagsList}\n\n`;
     md += `---\n\n`;
 
-    result.matches.forEach((match, i) => {
+    aggregatedResult.matches.forEach((match, i) => {
       const allMatchedTags = [
         ...match.matchedTags.component,
         ...match.matchedTags.style,
@@ -214,7 +297,7 @@ export default function MatchPage() {
     // Aggregate common tags across matches
     const allComponents = new Set<string>();
     const allStyles = new Set<string>();
-    result.matches.forEach(m => {
+    aggregatedResult.matches.forEach(m => {
       m.matchedTags.component.forEach(t => allComponents.add(t));
       m.matchedTags.style.forEach(t => allStyles.add(t));
     });
@@ -227,7 +310,7 @@ export default function MatchPage() {
     }
 
     return md;
-  }, [result]);
+  }, [aggregatedResult]);
 
   const handleCopy = useCallback(async () => {
     const md = generateCursorMarkdown();
@@ -237,9 +320,7 @@ export default function MatchPage() {
   }, [generateCursorMarkdown]);
 
   const reset = useCallback(() => {
-    setResult(null);
-    setPreviewUrl(null);
-    setError(null);
+    setImages([]);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -281,96 +362,200 @@ export default function MatchPage() {
         margin: '0 auto',
         padding: STYLES.spacing.lg,
       }}>
-        {/* Drop Zone */}
-        {!result && (
-          <div
-            onClick={handleClick}
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            style={{
-              border: `2px dashed ${isDragging ? STYLES.colors.accent : STYLES.colors.border}`,
-              borderRadius: STYLES.radius.md,
-              padding: STYLES.spacing.xl,
-              textAlign: 'center',
-              cursor: 'pointer',
-              backgroundColor: isDragging ? 'rgba(0,0,0,0.02)' : 'transparent',
-              transition: `all ${STYLES.motion.duration} ${STYLES.motion.easing}`,
-            }}
-          >
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              style={{ display: 'none' }}
-            />
-            
-            {isLoading ? (
-              <div>
-                <div style={{
-                  width: '48px',
-                  height: '48px',
-                  margin: '0 auto 16px',
-                  border: `3px solid ${STYLES.colors.border}`,
-                  borderTopColor: STYLES.colors.accent,
-                  borderRadius: '50%',
-                  animation: 'spin 1s linear infinite',
-                }}>
-                  <style>{`
-                    @keyframes spin {
-                      to { transform: rotate(360deg); }
-                    }
-                  `}</style>
-                </div>
-                <p style={{ color: STYLES.colors.textSecondary, margin: 0 }}>
-                  Analyzing your screenshot...
-                </p>
+        <style>{`
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
+
+        {/* Drop Zone - always visible for adding more images */}
+        <div
+          onClick={handleClick}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          style={{
+            border: `2px dashed ${isDragging ? STYLES.colors.accent : STYLES.colors.border}`,
+            borderRadius: STYLES.radius.md,
+            padding: images.length > 0 ? STYLES.spacing.md : STYLES.spacing.xl,
+            textAlign: 'center',
+            cursor: 'pointer',
+            backgroundColor: isDragging ? 'rgba(0,0,0,0.02)' : 'transparent',
+            transition: `all ${STYLES.motion.duration} ${STYLES.motion.easing}`,
+            marginBottom: images.length > 0 ? STYLES.spacing.lg : 0,
+          }}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleFileChange}
+            style={{ display: 'none' }}
+          />
+          
+          {images.length === 0 ? (
+            <>
+              <div style={{
+                width: '64px',
+                height: '64px',
+                margin: '0 auto 16px',
+                backgroundColor: STYLES.colors.border,
+                borderRadius: STYLES.radius.md,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '28px',
+              }}>
+                📸
               </div>
-            ) : (
-              <>
-                {previewUrl ? (
-                  <img
-                    src={previewUrl}
-                    alt="Preview"
-                    style={{
-                      maxWidth: '300px',
-                      maxHeight: '200px',
-                      borderRadius: STYLES.radius.sm,
-                      marginBottom: STYLES.spacing.md,
-                    }}
-                  />
-                ) : (
+              <p style={{
+                fontSize: '16px',
+                fontWeight: STYLES.typography.headingWeight,
+                margin: '0 0 8px 0',
+              }}>
+                Drop your screenshots here
+              </p>
+              <p style={{
+                fontSize: '14px',
+                color: STYLES.colors.textMuted,
+                margin: 0,
+              }}>
+                or click to browse · supports multiple images
+              </p>
+            </>
+          ) : (
+            <p style={{
+              fontSize: '14px',
+              color: STYLES.colors.textSecondary,
+              margin: 0,
+            }}>
+              + Drop more screenshots or click to add
+            </p>
+          )}
+        </div>
+
+        {/* Uploaded Images Grid */}
+        {images.length > 0 && (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+            gap: STYLES.spacing.sm,
+            marginBottom: STYLES.spacing.lg,
+          }}>
+            {images.map((img) => (
+              <div
+                key={img.id}
+                style={{
+                  position: 'relative',
+                  aspectRatio: '4/3',
+                  borderRadius: STYLES.radius.sm,
+                  overflow: 'hidden',
+                  backgroundColor: '#F5F5F5',
+                  border: `1px solid ${STYLES.colors.border}`,
+                }}
+              >
+                <img
+                  src={img.previewUrl}
+                  alt="Screenshot"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    opacity: img.status === 'processing' ? 0.5 : 1,
+                    transition: `opacity ${STYLES.motion.duration} ${STYLES.motion.easing}`,
+                  }}
+                />
+                
+                {/* Status indicator */}
+                {img.status === 'processing' && (
                   <div style={{
-                    width: '64px',
-                    height: '64px',
-                    margin: '0 auto 16px',
-                    backgroundColor: STYLES.colors.border,
-                    borderRadius: STYLES.radius.md,
+                    position: 'absolute',
+                    inset: 0,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '28px',
                   }}>
-                    📸
+                    <div style={{
+                      width: '24px',
+                      height: '24px',
+                      border: `2px solid ${STYLES.colors.border}`,
+                      borderTopColor: STYLES.colors.accent,
+                      borderRadius: '50%',
+                      animation: 'spin 1s linear infinite',
+                    }} />
                   </div>
                 )}
-                <p style={{
-                  fontSize: '16px',
-                  fontWeight: STYLES.typography.headingWeight,
-                  margin: '0 0 8px 0',
-                }}>
-                  Drop your screenshot here
-                </p>
-                <p style={{
-                  fontSize: '14px',
-                  color: STYLES.colors.textMuted,
-                  margin: 0,
-                }}>
-                  or click to browse
-                </p>
-              </>
-            )}
+                
+                {img.status === 'done' && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '6px',
+                    right: '6px',
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: STYLES.colors.success,
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '12px',
+                    color: '#fff',
+                  }}>
+                    ✓
+                  </div>
+                )}
+                
+                {img.status === 'error' && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '6px',
+                    right: '6px',
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: '#DC2626',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '12px',
+                    color: '#fff',
+                  }}>
+                    !
+                  </div>
+                )}
+
+                {/* Remove button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeImage(img.id);
+                  }}
+                  style={{
+                    position: 'absolute',
+                    top: '6px',
+                    left: '6px',
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: 'rgba(0,0,0,0.6)',
+                    border: 'none',
+                    borderRadius: '50%',
+                    color: '#fff',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    opacity: 0.7,
+                    transition: `opacity ${STYLES.motion.duration} ${STYLES.motion.easing}`,
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.7'; }}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
           </div>
         )}
 
@@ -381,112 +566,102 @@ export default function MatchPage() {
             color: '#DC2626',
             padding: STYLES.spacing.md,
             borderRadius: STYLES.radius.sm,
-            marginTop: STYLES.spacing.md,
+            marginBottom: STYLES.spacing.md,
           }}>
             {error}
           </div>
         )}
 
         {/* Results */}
-        {result && (
+        {aggregatedResult && (
           <div>
-            {/* Your Screenshot + Tags */}
+            {/* Combined Tags + Actions */}
             <div style={{
-              display: 'flex',
-              gap: STYLES.spacing.lg,
+              backgroundColor: STYLES.colors.bgSecondary,
+              borderRadius: STYLES.radius.md,
+              padding: STYLES.spacing.md,
               marginBottom: STYLES.spacing.lg,
-              flexWrap: 'wrap',
+              boxShadow: STYLES.shadow.subtle,
             }}>
-              {/* Preview */}
-              {previewUrl && (
-                <div style={{
-                  flex: '0 0 auto',
-                }}>
-                  <img
-                    src={previewUrl}
-                    alt="Your screenshot"
-                    style={{
-                      width: '200px',
-                      height: '150px',
-                      objectFit: 'cover',
-                      borderRadius: STYLES.radius.md,
-                      boxShadow: STYLES.shadow.subtle,
-                    }}
-                  />
-                </div>
-              )}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                gap: STYLES.spacing.md,
+                flexWrap: 'wrap',
+              }}>
+                <div style={{ flex: 1, minWidth: '250px' }}>
+                  <h2 style={{
+                    fontSize: '14px',
+                    fontWeight: STYLES.typography.headingWeight,
+                    color: STYLES.colors.textSecondary,
+                    margin: '0 0 12px 0',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                  }}>
+                    Combined Tags ({aggregatedResult.imageCount} {aggregatedResult.imageCount === 1 ? 'image' : 'images'})
+                  </h2>
 
-              {/* Extracted Info */}
-              <div style={{ flex: 1, minWidth: '250px' }}>
-                <h2 style={{
-                  fontSize: '16px',
-                  fontWeight: STYLES.typography.headingWeight,
-                  margin: '0 0 8px 0',
-                }}>
-                  Your Screenshot
-                </h2>
-                <p style={{
-                  fontSize: '14px',
-                  color: STYLES.colors.textSecondary,
-                  margin: '0 0 12px 0',
-                }}>
-                  {result.oneLiner}
-                </p>
-
-                {/* Tags */}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                  {['component', 'style', 'context', 'vibe'].map(category => (
-                    (result.extractedTags[category as keyof typeof result.extractedTags] || []).map(tag => (
-                      <span
-                        key={`${category}-${tag}`}
-                        style={{
-                          backgroundColor: category === 'component' ? '#E0F2FE' :
-                                         category === 'style' ? '#F3E8FF' :
-                                         category === 'context' ? '#DCFCE7' :
-                                         '#FEF3C7',
-                          color: STYLES.colors.textPrimary,
-                          padding: '4px 10px',
-                          borderRadius: STYLES.radius.full,
-                          fontSize: '12px',
-                          fontWeight: '500',
-                        }}
-                      >
-                        {tag}
-                      </span>
-                    ))
-                  ))}
+                  {/* Tags */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                    {['component', 'style', 'context', 'vibe'].map(category => (
+                      (aggregatedResult.extractedTags[category as keyof typeof aggregatedResult.extractedTags] || []).map(tag => (
+                        <span
+                          key={`${category}-${tag}`}
+                          style={{
+                            backgroundColor: category === 'component' ? '#E0F2FE' :
+                                           category === 'style' ? '#F3E8FF' :
+                                           category === 'context' ? '#DCFCE7' :
+                                           '#FEF3C7',
+                            color: STYLES.colors.textPrimary,
+                            padding: '4px 10px',
+                            borderRadius: STYLES.radius.full,
+                            fontSize: '12px',
+                            fontWeight: '500',
+                          }}
+                        >
+                          {tag}
+                        </span>
+                      ))
+                    ))}
+                  </div>
                 </div>
 
                 {/* Actions */}
-                <div style={{ marginTop: STYLES.spacing.md, display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
                   <button
                     onClick={handleCopy}
+                    disabled={isLoading}
                     style={{
-                      backgroundColor: STYLES.colors.accent,
+                      backgroundColor: isLoading ? STYLES.colors.textMuted : STYLES.colors.accent,
                       color: '#FFFFFF',
                       border: 'none',
                       padding: '10px 20px',
                       borderRadius: STYLES.radius.sm,
                       fontSize: '14px',
                       fontWeight: STYLES.typography.headingWeight,
-                      cursor: 'pointer',
+                      cursor: isLoading ? 'not-allowed' : 'pointer',
                       transition: `all ${STYLES.motion.duration} ${STYLES.motion.easing}`,
                       display: 'flex',
                       alignItems: 'center',
                       gap: '6px',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = STYLES.colors.accentHover;
-                      e.currentTarget.style.transform = 'translateY(-1px)';
+                      if (!isLoading) {
+                        e.currentTarget.style.backgroundColor = STYLES.colors.accentHover;
+                        e.currentTarget.style.transform = 'translateY(-1px)';
+                      }
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = STYLES.colors.accent;
-                      e.currentTarget.style.transform = 'translateY(0)';
+                      if (!isLoading) {
+                        e.currentTarget.style.backgroundColor = STYLES.colors.accent;
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      }
                     }}
                   >
                     {copied ? (
                       <>
-                        <span style={{ color: STYLES.colors.success }}>✓</span>
+                        <span style={{ color: '#90EE90' }}>✓</span>
                         Copied!
                       </>
                     ) : (
@@ -514,7 +689,7 @@ export default function MatchPage() {
                       e.currentTarget.style.borderColor = STYLES.colors.border;
                     }}
                   >
-                    Try Another
+                    Clear All
                   </button>
                 </div>
               </div>
@@ -529,7 +704,8 @@ export default function MatchPage() {
               textTransform: 'uppercase',
               letterSpacing: '0.5px',
             }}>
-              {result.matches.length} Relevant References
+              {aggregatedResult.matches.length} Relevant References
+              {isLoading && <span style={{ fontWeight: '400', marginLeft: '8px' }}>(analyzing...)</span>}
             </h3>
 
             <div style={{
@@ -537,7 +713,7 @@ export default function MatchPage() {
               gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
               gap: STYLES.spacing.md,
             }}>
-              {result.matches.map((match, i) => (
+              {aggregatedResult.matches.map((match, i) => (
                 <a
                   key={match.block.id}
                   href={match.block.arena_url}
@@ -656,7 +832,7 @@ export default function MatchPage() {
               ))}
             </div>
 
-            {result.matches.length === 0 && (
+            {aggregatedResult.matches.length === 0 && !isLoading && (
               <div style={{
                 textAlign: 'center',
                 padding: STYLES.spacing.xl,
