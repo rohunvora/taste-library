@@ -12,6 +12,7 @@
     "taste-profile": "node dist/taste-profile.js",
     "anti-patterns": "node dist/anti-patterns.js",
     "index-blocks": "node dist/index-blocks.js",
+    "extract-styles": "node dist/extract-styles.js",
     "ab-test": "node dist/ab-test.js"
   },
   "dependencies": {
