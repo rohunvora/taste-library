@@ -47,7 +47,7 @@ Analyzes a curated Are.na channel and identifies what you *avoid*.
 npm run anti-patterns -- --channel=your-channel-slug
 ```
 
-Uses Gemini 3 Pro to:
+Uses Gemini to:
 - Download and analyze images
 - Scrape and parse link content
 - Read text blocks
@@ -55,7 +55,25 @@ Uses Gemini 3 Pro to:
 
 Output: `taste-profiles/[channel-slug]/anti-rules.md`
 
-### 3. Archive & Cleanup Scripts
+### 3. Block Indexer
+
+Semantically tags all visual blocks in a channel for fast reference matching.
+
+```bash
+npm run index-blocks -- --channel=your-channel-slug
+```
+
+Tags each image with:
+- **component**: What UI elements (dashboard, cards, hero, etc.)
+- **style**: Visual treatment (dark-mode, rounded, gradient, etc.)
+- **context**: Where it would be used (saas, mobile-app, landing-page, etc.)
+- **vibe**: Emotional quality (premium, playful, professional, etc.)
+
+Output: `taste-profiles/[channel-slug]/index.json`
+
+See [TAGS.md](./TAGS.md) for the full tag taxonomy.
+
+### 4. Archive & Cleanup Scripts
 
 ```bash
 node archive.js   # Move misc blocks to Archive channel
@@ -74,12 +92,15 @@ arena-lib/
 │   │   └── api/                # API routes
 ├── src/
 │   ├── anti-patterns.ts        # Extract anti-patterns from channel
+│   ├── index-blocks.ts         # Semantically tag blocks for matching
 │   ├── taste-profile.ts        # Generate taste profiles (experimental)
 │   ├── arena-client.ts         # Are.na API wrapper
 │   └── types.ts                # TypeScript types
-├── taste-profiles/             # Generated outputs per channel
-│   ├── [channel-slug]/
-│   │   └── anti-rules.md       # Extracted anti-patterns
+├── taste-profiles/             # Generated outputs per channel (gitignored)
+│   └── [channel-slug]/
+│       ├── anti-rules.md       # Extracted anti-patterns
+│       └── index.json          # Semantic tags for all blocks
+├── TAGS.md                     # Tag taxonomy documentation
 ├── archive.js                  # Archive script
 ├── cleanup.js                  # Cleanup script
 └── .env                        # Your API keys (not committed)

@@ -9,8 +9,10 @@
     "organize": "tsc && node dist/index.js",
     "organize:apply": "tsc && node dist/index.js --apply",
     "classify": "tsc && node dist/manual-classifier.js",
-    "taste-profile": "tsc && node dist/taste-profile.js",
-    "ab-test": "tsc && node dist/ab-test.js"
+    "taste-profile": "node dist/taste-profile.js",
+    "anti-patterns": "node dist/anti-patterns.js",
+    "index-blocks": "node dist/index-blocks.js",
+    "ab-test": "node dist/ab-test.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
