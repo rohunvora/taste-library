@@ -428,9 +428,14 @@ export default function Home() {
       {/* Header */}
       <div style={styles.header}>
         <span style={styles.remaining}>{filteredBlocks.length} of {blocks.length}</span>
-        <button onClick={loadBlocks} style={styles.refreshSmall} disabled={loading}>
-          ↻
-        </button>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <a href="/match" style={styles.matchLink}>
+            🎯 Match
+          </a>
+          <button onClick={loadBlocks} style={styles.refreshSmall} disabled={loading}>
+            ↻
+          </button>
+        </div>
       </div>
 
       {/* Type filters */}
@@ -738,6 +743,16 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '18px',
     cursor: 'pointer',
     padding: '4px 8px',
+  },
+  matchLink: {
+    backgroundColor: '#1a1a1a',
+    color: '#22c55e',
+    fontSize: '12px',
+    fontWeight: 600,
+    padding: '6px 12px',
+    borderRadius: '6px',
+    textDecoration: 'none',
+    border: '1px solid #333',
   },
   filterRow: {
     display: 'flex',

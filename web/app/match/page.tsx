@@ -449,21 +449,39 @@ export default function MatchPage() {
         borderBottom: `1px solid ${STYLES.colors.border}`,
         backgroundColor: STYLES.colors.bgSecondary,
       }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <h1 style={{
-            fontSize: '20px',
-            fontWeight: STYLES.typography.headingWeight,
-            margin: 0,
-          }}>
-            Reference Matcher
-          </h1>
-          <p style={{
-            fontSize: '14px',
-            color: STYLES.colors.textSecondary,
-            margin: '4px 0 0 0',
-          }}>
-            Drop a screenshot of your WIP → get relevant references from your Are.na
-          </p>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h1 style={{
+              fontSize: '20px',
+              fontWeight: STYLES.typography.headingWeight,
+              margin: 0,
+            }}>
+              Reference Matcher
+            </h1>
+            <p style={{
+              fontSize: '14px',
+              color: STYLES.colors.textSecondary,
+              margin: '4px 0 0 0',
+            }}>
+              Drop a screenshot of your WIP → get relevant references from your Are.na
+            </p>
+          </div>
+          <a 
+            href="/" 
+            style={{
+              backgroundColor: STYLES.colors.bgPrimary,
+              color: STYLES.colors.textSecondary,
+              fontSize: '13px',
+              fontWeight: '500',
+              padding: '8px 14px',
+              borderRadius: STYLES.radius.sm,
+              textDecoration: 'none',
+              border: `1px solid ${STYLES.colors.border}`,
+              transition: `all ${STYLES.motion.duration} ${STYLES.motion.easing}`,
+            }}
+          >
+            ← Classifier
+          </a>
         </div>
       </header>
 
@@ -686,23 +704,23 @@ export default function MatchPage() {
         {aggregatedResult && (
           <div>
             {/* Actions Bar - simplified */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
               alignItems: 'center',
               marginBottom: STYLES.spacing.md,
-              flexWrap: 'wrap',
+                flexWrap: 'wrap',
               gap: STYLES.spacing.sm,
-            }}>
+              }}>
               <div>
                 <h3 style={{
-                  fontSize: '14px',
-                  fontWeight: STYLES.typography.headingWeight,
-                  color: STYLES.colors.textSecondary,
+                    fontSize: '14px',
+                    fontWeight: STYLES.typography.headingWeight,
+                    color: STYLES.colors.textSecondary,
                   margin: 0,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.5px',
-                }}>
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                  }}>
                   {aggregatedResult.matches.length} References Found
                   {isLoading && <span style={{ fontWeight: '400', marginLeft: '8px' }}>(analyzing...)</span>}
                 </h3>
@@ -713,60 +731,60 @@ export default function MatchPage() {
                 }}>
                   {selectedRefs.size} selected · Click card to toggle · Double-click for primary
                 </p>
-              </div>
+                </div>
 
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                <button
+                  <button
                   onClick={downloadImages}
                   disabled={isLoading || isExporting || selectedRefs.size === 0}
-                  style={{
+                    style={{
                     backgroundColor: (isLoading || isExporting || selectedRefs.size === 0) 
                       ? STYLES.colors.textMuted 
                       : STYLES.colors.accent,
-                    color: '#FFFFFF',
-                    border: 'none',
-                    padding: '10px 20px',
-                    borderRadius: STYLES.radius.sm,
-                    fontSize: '14px',
-                    fontWeight: STYLES.typography.headingWeight,
+                      color: '#FFFFFF',
+                      border: 'none',
+                      padding: '10px 20px',
+                      borderRadius: STYLES.radius.sm,
+                      fontSize: '14px',
+                      fontWeight: STYLES.typography.headingWeight,
                     cursor: (isLoading || isExporting || selectedRefs.size === 0) ? 'not-allowed' : 'pointer',
-                    transition: `all ${STYLES.motion.duration} ${STYLES.motion.easing}`,
+                      transition: `all ${STYLES.motion.duration} ${STYLES.motion.easing}`,
                   }}
                 >
                   {isExporting ? 'Downloading...' : `Download ${selectedRefs.size} Images`}
-                </button>
-                <button
+                  </button>
+                  <button
                   onClick={handleCopyPrompt}
                   disabled={isLoading || selectedRefs.size === 0}
-                  style={{
-                    backgroundColor: 'transparent',
-                    color: STYLES.colors.textPrimary,
-                    border: `1px solid ${STYLES.colors.border}`,
-                    padding: '10px 20px',
-                    borderRadius: STYLES.radius.sm,
-                    fontSize: '14px',
-                    fontWeight: STYLES.typography.headingWeight,
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: STYLES.colors.textPrimary,
+                      border: `1px solid ${STYLES.colors.border}`,
+                      padding: '10px 20px',
+                      borderRadius: STYLES.radius.sm,
+                      fontSize: '14px',
+                      fontWeight: STYLES.typography.headingWeight,
                     cursor: (isLoading || selectedRefs.size === 0) ? 'not-allowed' : 'pointer',
-                    transition: `all ${STYLES.motion.duration} ${STYLES.motion.easing}`,
-                  }}
-                >
+                      transition: `all ${STYLES.motion.duration} ${STYLES.motion.easing}`,
+                    }}
+                  >
                   {copied ? '✓ Copied!' : 'Copy Prompt'}
-                </button>
-                <button
-                  onClick={reset}
-                  style={{
-                    backgroundColor: 'transparent',
-                    color: STYLES.colors.textSecondary,
-                    border: `1px solid ${STYLES.colors.border}`,
-                    padding: '10px 20px',
-                    borderRadius: STYLES.radius.sm,
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                    transition: `all ${STYLES.motion.duration} ${STYLES.motion.easing}`,
-                  }}
-                >
+                  </button>
+                  <button
+                    onClick={reset}
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: STYLES.colors.textSecondary,
+                      border: `1px solid ${STYLES.colors.border}`,
+                      padding: '10px 20px',
+                      borderRadius: STYLES.radius.sm,
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      transition: `all ${STYLES.motion.duration} ${STYLES.motion.easing}`,
+                    }}
+                  >
                   Clear
-                </button>
+                  </button>
               </div>
             </div>
 
@@ -782,13 +800,13 @@ export default function MatchPage() {
                 
                 return (
                   <div
-                    key={match.block.id}
+                  key={match.block.id}
                     onClick={() => toggleSelection(match.block.id)}
                     onDoubleClick={() => setAsPrimary(match.block.id)}
-                    style={{
-                      backgroundColor: STYLES.colors.bgSecondary,
-                      borderRadius: STYLES.radius.md,
-                      overflow: 'hidden',
+                  style={{
+                    backgroundColor: STYLES.colors.bgSecondary,
+                    borderRadius: STYLES.radius.md,
+                    overflow: 'hidden',
                       cursor: 'pointer',
                       boxShadow: isSelected ? STYLES.shadow.lifted : STYLES.shadow.subtle,
                       border: isPrimary 
@@ -796,36 +814,36 @@ export default function MatchPage() {
                         : isSelected 
                           ? `2px solid ${STYLES.colors.success}` 
                           : '2px solid transparent',
-                      transition: `all ${STYLES.motion.duration} ${STYLES.motion.easing}`,
+                    transition: `all ${STYLES.motion.duration} ${STYLES.motion.easing}`,
                       opacity: isSelected ? 1 : 0.7,
-                    }}
-                  >
+                  }}
+                >
                     {/* Large Image */}
-                    {match.block.image_url && (
-                      <div style={{
-                        aspectRatio: '16/10',
-                        overflow: 'hidden',
-                        backgroundColor: '#F5F5F5',
+                  {match.block.image_url && (
+                    <div style={{
+                      aspectRatio: '16/10',
+                      overflow: 'hidden',
+                      backgroundColor: '#F5F5F5',
                         position: 'relative',
-                      }}>
-                        <img
-                          src={match.block.image_url}
-                          alt={match.block.title || 'Reference'}
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                          }}
-                        />
-                        
+                    }}>
+                      <img
+                        src={match.block.image_url}
+                        alt={match.block.title || 'Reference'}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                        }}
+                      />
+
                         {/* Selection indicator */}
-                        <div style={{
+                    <div style={{
                           position: 'absolute',
                           top: '12px',
                           left: '12px',
-                          display: 'flex',
+                      display: 'flex',
                           gap: '8px',
-                          alignItems: 'center',
+                      alignItems: 'center',
                         }}>
                           <div style={{
                             width: '24px',
@@ -843,20 +861,20 @@ export default function MatchPage() {
                             {isSelected && '✓'}
                           </div>
                           {isPrimary && (
-                            <span style={{
-                              backgroundColor: STYLES.colors.accent,
+                      <span style={{
+                        backgroundColor: STYLES.colors.accent,
                               color: '#fff',
                               padding: '4px 10px',
-                              borderRadius: STYLES.radius.full,
-                              fontSize: '11px',
-                              fontWeight: '600',
+                        borderRadius: STYLES.radius.full,
+                        fontSize: '11px',
+                        fontWeight: '600',
                               textTransform: 'uppercase',
                               letterSpacing: '0.5px',
-                            }}>
+                      }}>
                               Primary
-                            </span>
+                      </span>
                           )}
-                        </div>
+                    </div>
 
                         {/* Open in Are.na */}
                         <a
@@ -887,12 +905,12 @@ export default function MatchPage() {
 
                     {/* Human-readable explanation */}
                     <div style={{ padding: STYLES.spacing.md }}>
-                      <p style={{
+                    <p style={{
                         fontSize: '14px',
-                        fontWeight: STYLES.typography.bodyWeight,
+                      fontWeight: STYLES.typography.bodyWeight,
                         margin: 0,
                         lineHeight: 1.5,
-                        color: STYLES.colors.textPrimary,
+                      color: STYLES.colors.textPrimary,
                       }}>
                         {match.relevanceNote}
                       </p>
