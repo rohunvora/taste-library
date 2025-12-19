@@ -4,7 +4,31 @@
 
 You collect references in Are.na. This system converts them into structured guidance that makes AI coding assistants (Cursor, Claude, etc.) build interfaces that match your aesthetic.
 
-**Live**: [arena-refs.vercel.app](https://arena-refs.vercel.app)
+## 🚀 NEW: Personal Component Library
+
+**Live**: [site-m22udin8q-rohun-voras-projects.vercel.app](https://site-m22udin8q-rohun-voras-projects.vercel.app)
+
+Your Are.na saves → structured, replicable components → auto-organized design system website.
+
+- **26 components** extracted with AI from UI/UX channel
+- **104 atoms** (buttons, surfaces, cards, typography) ready to mix and match
+- **8 aesthetic families** (Flat Minimal, Soft Gradient, Dark Premium, etc.)
+- **Copy-paste CSS** for every component and atom
+- **Export** to `.cursorrules`, CSS variables, or Tailwind config
+
+### Quick Start: Extract Your Own Components
+
+```bash
+# Extract components from your Are.na channel
+npx tsx cli/extract-component.ts --channel=your-channel-slug
+
+# Start the site locally
+cd site && npm install && npm run dev
+```
+
+---
+
+**Original Web App**: [arena-refs.vercel.app](https://arena-refs.vercel.app)
 
 ---
 
