@@ -1,23 +1,25 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import { DM_Sans, JetBrains_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 
-const sans = IBM_Plex_Sans({
+const sans = DM_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-sans",
+  display: "swap",
 });
 
-const mono = IBM_Plex_Mono({
+const mono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
   variable: "--font-mono",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Component Library | Built from Are.na",
-  description: "A personal component library extracted from curated UI/UX inspiration",
+  title: "Design System | Your Taste, Extracted",
+  description: "A personal component library extracted from curated UI/UX inspiration. Browse live components, not screenshots.",
 };
 
 export default function RootLayout({
@@ -29,29 +31,37 @@ export default function RootLayout({
     <html lang="en" className={`${sans.variable} ${mono.variable}`}>
       <body>
         <div className="min-h-screen flex flex-col">
-          {/* Header */}
+          {/* Header - refined with backdrop blur */}
           <header 
-            className="sticky top-0 z-50 border-b"
+            className="sticky top-0 z-50 border-b backdrop-blur-xl header-blur"
             style={{ 
-              background: 'var(--bg-base)', 
-              borderColor: 'var(--border)' 
+              borderColor: 'var(--border)',
             }}
           >
             <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
               <Link 
                 href="/" 
-                className="flex items-center gap-2 font-semibold"
+                className="flex items-center gap-2.5 font-semibold tracking-tight"
                 style={{ color: 'var(--text-primary)' }}
               >
-                <span className="text-lg">⬡</span>
-                <span>Components</span>
+                <span 
+                  className="w-6 h-6 rounded-md flex items-center justify-center text-xs"
+                  style={{ 
+                    background: 'var(--text-primary)',
+                    color: 'var(--bg-base)',
+                  }}
+                >
+                  ⬡
+                </span>
+                <span>Your Design System</span>
               </Link>
               
-              <nav className="flex items-center gap-1">
+              <nav className="flex items-center gap-0.5">
                 <NavLink href="/components">Browse</NavLink>
-                <NavLink href="/aesthetics">Aesthetics</NavLink>
                 <NavLink href="/atoms">Atoms</NavLink>
-                <NavLink href="/export">Export</NavLink>
+                <NavLink href="/aesthetics">Aesthetics</NavLink>
+                <div className="w-px h-4 mx-2" style={{ background: 'var(--border)' }} />
+                <NavLink href="/export" accent>Export</NavLink>
               </nav>
             </div>
           </header>
@@ -61,19 +71,41 @@ export default function RootLayout({
             {children}
           </main>
 
-          {/* Footer */}
+          {/* Footer - minimal and refined */}
           <footer 
-            className="border-t py-8"
+            className="border-t py-10"
             style={{ borderColor: 'var(--border)' }}
           >
             <div className="max-w-7xl mx-auto px-4">
-              <div className="flex items-center justify-between text-sm" style={{ color: 'var(--text-muted)' }}>
-                <span>
-                  Built from <a href="https://are.na" target="_blank" rel="noopener" className="underline hover:opacity-70">Are.na</a> inspiration
-                </span>
-                <span>
-                  Powered by AI extraction
-                </span>
+              <div 
+                className="flex items-center justify-between text-sm"
+                style={{ color: 'var(--text-muted)' }}
+              >
+                <div className="flex items-center gap-6">
+                  <span>
+                    Built from{' '}
+                    <a 
+                      href="https://are.na" 
+                      target="_blank" 
+                      rel="noopener" 
+                      className="underline hover:opacity-70 transition-opacity"
+                    >
+                      Are.na
+                    </a>
+                  </span>
+                  <span className="hidden sm:inline">·</span>
+                  <span className="hidden sm:inline">
+                    AI-powered extraction
+                  </span>
+                </div>
+                <a
+                  href="https://github.com"
+                  target="_blank"
+                  rel="noopener"
+                  className="hover:opacity-70 transition-opacity"
+                >
+                  GitHub
+                </a>
               </div>
             </div>
           </footer>
@@ -83,11 +115,34 @@ export default function RootLayout({
   );
 }
 
-function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
+function NavLink({ 
+  href, 
+  children,
+  accent = false,
+}: { 
+  href: string; 
+  children: React.ReactNode;
+  accent?: boolean;
+}) {
+  if (accent) {
+    return (
+      <Link
+        href={href}
+        className="px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all hover:opacity-90"
+        style={{ 
+          background: 'var(--text-primary)',
+          color: 'var(--bg-base)',
+        }}
+      >
+        {children}
+      </Link>
+    );
+  }
+  
   return (
     <Link
       href={href}
-      className="px-3 py-1.5 rounded-md text-sm font-medium transition-colors hover:bg-[var(--bg-inset)]"
+      className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors hover:bg-[var(--bg-inset)]"
       style={{ color: 'var(--text-secondary)' }}
     >
       {children}
