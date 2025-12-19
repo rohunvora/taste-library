@@ -1,1186 +1,941 @@
-'use client'
+/**
+ * Reference Matcher UI
+ * 
+ * Drop a WIP screenshot → get relevant references from your indexed Are.na library.
+ * 
+ * User flow:
+ * 1. Drop/upload screenshot(s)
+ * 2. See matched references with human-readable explanations
+ * 3. Click to toggle selection, double-click to set as primary
+ * 4. Download selected images + copy minimal prompt for Claude
+ * 
+ * The output is designed for Claude: actual images + minimal context.
+ * Claude interprets the images directly rather than through extracted specs.
+ */
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+'use client';
 
-interface Block {
-  id: number
-  title: string | null
-  description: string | null
-  content: string | null
-  class: string
-  source: {
-    url: string | null
-    title: string | null
-  } | null
-  image?: {
-    display?: { url: string }
-    thumb?: { url: string }
-  }
-  sourceChannels: string[]
+import { useState, useCallback, useRef, useMemo } from 'react';
+
+// ============================================================================
+// STYLE TOKENS (derived from taste-profiles/ui-ux-*/style-guide.json)
+// 
+// Source: 21 images analyzed, high confidence
+// Context: developer-tools/saas (Reference Matcher is a dev tool)
+// 
+// Key findings from extraction:
+// - radius_px: 11 (rounded) → using 12px for cleaner numbers
+// - density: balanced → medium padding
+// - shadow_presence: subtle for saas/developer-tools context
+// - typography.family_vibe: neo-grotesque → system-ui (SF Pro on Mac)
+// - motion: 200ms ease-out, hover_effect: lift
+// - colors.background_primary: #F2F0EC (developer-tools context)
+// - colors.accent_primary: #000000 (minimal, using for buttons)
+// ============================================================================
+
+const STYLES = {
+  colors: {
+    bgPrimary: '#F2F0EC',      // Warm off-white (developer-tools context)
+    bgSecondary: '#FFFFFF',    // Card backgrounds
+    textPrimary: '#000000',    
+    textSecondary: '#434343',  // developer-tools secondary
+    textMuted: '#A3A3A3',      
+    accent: '#000000',         // Minimal accent from common extraction
+    accentHover: '#333333',
+    border: 'rgba(0,0,0,0.08)',
+    success: '#4CAF50',        // From saas context
+  },
+  radius: {
+    sm: '8px',    // slightly-rounded for dev-tools
+    md: '12px',   // rounded (common)
+    lg: '16px',
+    full: '9999px',
+  },
+  spacing: {
+    xs: '8px',
+    sm: '12px',
+    md: '20px',    // medium padding
+    lg: '32px',
+    xl: '48px',
+  },
+  shadow: {
+    subtle: '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)',
+    lifted: '0 4px 12px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06)',
+  },
+  motion: {
+    duration: '200ms',
+    easing: 'ease-out',
+  },
+  typography: {
+    // neo-grotesque → system fonts (SF Pro on Mac, Segoe on Windows)
+    family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+    headingWeight: '600',
+    bodyWeight: '400',
+  },
+};
+
+// ============================================================================
+// TYPES
+// ============================================================================
+
+interface MatchedBlock {
+  block: {
+    id: number;
+    title: string | null;
+    arena_url: string;
+    image_url: string | null;
+    tags: {
+      component?: string[];
+      style?: string[];
+      context?: string[];
+      vibe?: string[];
+    };
+    one_liner: string;
+  };
+  score: number;
+  matchedTags: {
+    component: string[];
+    style: string[];
+    context: string[];
+    vibe: string[];
+  };
+  relevanceNote: string;
 }
 
-interface Category {
-  key: string
-  label: string
-  hint: string
-  icon: string
-  color: string
-  isCustom?: boolean
+interface MatchResponse {
+  extractedTags: {
+    component?: string[];
+    style?: string[];
+    context?: string[];
+    vibe?: string[];
+  };
+  oneLiner: string;
+  matches: MatchedBlock[];
+  totalIndexed: number;
 }
 
-interface LastAction {
-  block: Block
-  channel: string
-  channelLabel: string
-  isCustom: boolean
-  isSkip: boolean
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
+
+interface UploadedImage {
+  id: string;
+  file: File;
+  previewUrl: string;
+  status: 'pending' | 'processing' | 'done' | 'error';
+  result?: MatchResponse;
+  error?: string;
 }
 
-interface CustomChannel {
-  title: string
-  slug: string
-  count: number
-  isSystem?: boolean
-}
-
-const DEFAULT_CATEGORIES: Category[] = [
-  { 
-    key: 'ui-ux', 
-    label: 'UI/UX', 
-    hint: 'Interfaces, apps, websites, visual',
-    icon: '📱', 
-    color: '#7c3aed',
-  },
-  { 
-    key: 'writing', 
-    label: 'Writing', 
-    hint: 'Essays, copy, prose, articles',
-    icon: '✍️', 
-    color: '#d97706',
-  },
-  { 
-    key: 'code', 
-    label: 'Code', 
-    hint: 'Repos, docs, technical, tools',
-    icon: '⌨️', 
-    color: '#059669',
-  },
-  { 
-    key: 'thinking', 
-    label: 'Thinking', 
-    hint: 'Mental models, strategy, process',
-    icon: '🧠', 
-    color: '#db2777',
-  },
-]
-
-// Color palette for custom channels
-const CUSTOM_COLORS = ['#6366f1', '#0ea5e9', '#14b8a6', '#f97316', '#ef4444', '#8b5cf6']
-
-export default function Home() {
-  const [blocks, setBlocks] = useState<Block[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [lastAction, setLastAction] = useState<LastAction | null>(null)
-  const [undoing, setUndoing] = useState(false)
-  const [showCreateModal, setShowCreateModal] = useState(false)
-  const [newChannelName, setNewChannelName] = useState('')
-  const [allChannels, setAllChannels] = useState<CustomChannel[]>([])
-  const [sessionChannels, setSessionChannels] = useState<string[]>([]) // Channels created this session
-  const [slideDirection, setSlideDirection] = useState<'left' | 'right' | null>(null)
-  const [expandedImage, setExpandedImage] = useState<string | null>(null)
-  const [expandedText, setExpandedText] = useState<string | null>(null)
-  const [typeFilter, setTypeFilter] = useState<string>('all')
+export default function MatchPage() {
+  const [isDragging, setIsDragging] = useState(false);
+  const [images, setImages] = useState<UploadedImage[]>([]);
+  const [copied, setCopied] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
-  const touchStartX = useRef(0)
-  const touchEndX = useRef(0)
-  
+  // Selection state for references
+  const [selectedRefs, setSelectedRefs] = useState<Set<number>>(new Set());
+  const [primaryRef, setPrimaryRef] = useState<number | null>(null);
 
-  // Load blocks - this is the single source of truth
-  const loadBlocks = useCallback(async () => {
+  const isLoading = images.some(img => img.status === 'processing');
+  const hasResults = images.some(img => img.status === 'done');
+  const error = images.find(img => img.status === 'error')?.error || null;
+
+  const processImage = useCallback(async (image: UploadedImage) => {
+    setImages(prev => prev.map(img => 
+      img.id === image.id ? { ...img, status: 'processing' as const } : img
+    ));
+
     try {
-      setLoading(true)
-      const res = await fetch('/api/blocks')
-      if (!res.ok) throw new Error('Failed to load blocks')
-      const data = await res.json()
-      setBlocks(data.blocks)
-      setAllChannels(data.channels || [])
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to load')
-    } finally {
-      setLoading(false)
+      const response = await fetch('/api/match', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: image.previewUrl }),
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to match');
+      }
+
+      setImages(prev => prev.map(img => 
+        img.id === image.id ? { ...img, status: 'done' as const, result: data } : img
+      ));
+    } catch (err: any) {
+      setImages(prev => prev.map(img => 
+        img.id === image.id ? { ...img, status: 'error' as const, error: err.message } : img
+      ));
     }
-  }, [])
+  }, []);
 
-  // Load on mount
-  useEffect(() => {
-    loadBlocks()
-  }, [loadBlocks])
-
-  // Haptic feedback helper
-  const vibrate = (pattern: number | number[]) => {
-    if (navigator.vibrate) {
-      navigator.vibrate(pattern)
+  const handleFiles = useCallback(async (files: FileList | File[]) => {
+    const imageFiles = Array.from(files).filter(f => f.type.startsWith('image/'));
+    
+    if (imageFiles.length === 0) {
+      return;
     }
-  }
 
-  // Build categories list (defaults + channels created this session)
-  const categories: Category[] = [
-    ...DEFAULT_CATEGORIES,
-    ...sessionChannels.map((title, i) => ({
-      key: `custom-${title.toLowerCase().replace(/\s+/g, '-')}`,
-      label: title,
-      hint: 'New channel',
-      icon: '📁',
-      color: CUSTOM_COLORS[i % CUSTOM_COLORS.length],
-      isCustom: true,
-    })),
-  ]
-
-  // Filter blocks by type
-  const filteredBlocks = typeFilter === 'all' 
-    ? blocks 
-    : blocks.filter(b => {
-        if (typeFilter === 'image') return b.class === 'Image'
-        if (typeFilter === 'link') return b.class === 'Link'
-        if (typeFilter === 'text') return b.class === 'Text'
-        if (typeFilter === 'media') return b.class === 'Media' || b.class === 'Attachment'
-        return true
+    // Create preview URLs and add to state
+    // FIX: Resize large images to avoid stack overflow when JSON.stringify-ing large base64 strings
+    const newImages: UploadedImage[] = await Promise.all(
+      imageFiles.map(async (file) => {
+        const previewUrl = await new Promise<string>((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            // Resize if too large (max 1200px on longest side)
+            const MAX_SIZE = 1200;
+            let { width, height } = img;
+            
+            if (width > MAX_SIZE || height > MAX_SIZE) {
+              if (width > height) {
+                height = Math.round((height * MAX_SIZE) / width);
+                width = MAX_SIZE;
+              } else {
+                width = Math.round((width * MAX_SIZE) / height);
+                height = MAX_SIZE;
+              }
+            }
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx?.drawImage(img, 0, 0, width, height);
+            
+            // Use JPEG for smaller size (quality 0.8)
+            resolve(canvas.toDataURL('image/jpeg', 0.8));
+          };
+          img.onerror = () => {
+            // Fallback to original if image loading fails
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target?.result as string);
+            reader.readAsDataURL(file);
+          };
+          // Load image from file
+          img.src = URL.createObjectURL(file);
+        });
+        
+        return {
+          id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+          file,
+          previewUrl,
+          status: 'pending' as const,
+        };
       })
-  
-  // Type filter counts
-  const typeCounts = {
-    all: blocks.length,
-    image: blocks.filter(b => b.class === 'Image').length,
-    link: blocks.filter(b => b.class === 'Link').length,
-    text: blocks.filter(b => b.class === 'Text').length,
-    media: blocks.filter(b => b.class === 'Media' || b.class === 'Attachment').length,
-  }
+    );
 
-  // Preload next image for instant transitions
-  useEffect(() => {
-    if (filteredBlocks.length > 1) {
-      const nextBlock = filteredBlocks[1]
-      const nextImageUrl = nextBlock.image?.display?.url || nextBlock.image?.thumb?.url
-      if (nextImageUrl) {
-        const img = new Image()
-        img.src = nextImageUrl
+    setImages(prev => [...prev, ...newImages]);
+
+    // Process all new images in parallel
+    newImages.forEach(img => processImage(img));
+  }, [processImage]);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    if (e.dataTransfer.files.length > 0) {
+      handleFiles(e.dataTransfer.files);
+    }
+  }, [handleFiles]);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  }, []);
+
+  const handleClick = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      handleFiles(e.target.files);
+    }
+  }, [handleFiles]);
+
+  const removeImage = useCallback((id: string) => {
+    setImages(prev => prev.filter(img => img.id !== id));
+  }, []);
+
+  // Aggregate all results for combined view
+  const aggregatedResult = useMemo(() => {
+    const completedImages = images.filter(img => img.status === 'done' && img.result);
+    if (completedImages.length === 0) return null;
+
+    // Get the one-liner describing what user is building
+    const queryOneLiner = completedImages[0]?.result?.oneLiner || 'UI design';
+
+    // Combine all matches, dedupe by block id, re-sort by score
+    const matchMap = new Map<number, MatchedBlock>();
+    completedImages.forEach(img => {
+      img.result?.matches.forEach(match => {
+        const existing = matchMap.get(match.block.id);
+        if (!existing || match.score > existing.score) {
+          matchMap.set(match.block.id, match);
+        }
+      });
+    });
+
+    const combinedMatches = Array.from(matchMap.values())
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 6);
+
+    return {
+      queryOneLiner,
+      matches: combinedMatches,
+      imageCount: completedImages.length,
+    };
+  }, [images]);
+
+  // Auto-select top 4 refs when results change
+  const prevMatchIds = useRef<string>('');
+  useMemo(() => {
+    if (!aggregatedResult) return;
+    const currentIds = aggregatedResult.matches.map(m => m.block.id).join(',');
+    if (currentIds !== prevMatchIds.current) {
+      prevMatchIds.current = currentIds;
+      // Auto-select top 4
+      const top4Ids = aggregatedResult.matches.slice(0, 4).map(m => m.block.id);
+      setSelectedRefs(new Set(top4Ids));
+      // Set first as primary
+      if (top4Ids.length > 0) {
+        setPrimaryRef(top4Ids[0]);
       }
     }
-  }, [filteredBlocks])
+  }, [aggregatedResult]);
 
-  const classify = useCallback((category: string, customChannel?: string, createNew?: boolean) => {
-    if (filteredBlocks.length === 0) return
-    
-    const block = filteredBlocks[0]
-    const cat = DEFAULT_CATEGORIES.find(c => c.key === category)
-    
-    // Instant feedback
-    vibrate(10)
-    setLastAction({
-      block,
-      channel: customChannel || category,
-      channelLabel: customChannel || cat?.label || category,
-      isCustom: !!customChannel,
-      isSkip: false,
-    })
-    
-    // Remove from UI immediately (from main blocks array)
-    setBlocks(prev => prev.filter(b => b.id !== block.id))
-    
-    // Fire and forget
-    fetch('/api/classify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        blockId: block.id, 
-        channel: customChannel ? undefined : category,
-        customChannel,
-        createNew,
-      }),
-    }).catch(console.error)
-  }, [filteredBlocks])
+  // Generate minimal prompt for Claude
+  const generatePrompt = useCallback(() => {
+    if (!aggregatedResult) return '';
 
-  const skip = useCallback(() => {
-    if (filteredBlocks.length === 0) return
-    
-    const block = filteredBlocks[0]
-    
-    // Instant feedback
-    vibrate(10)
-    setLastAction({
-      block,
-      channel: 'skip',
-      channelLabel: 'Skipped',
-      isCustom: false,
-      isSkip: true,
-    })
-    
-    // Remove from UI immediately
-    setBlocks(prev => prev.filter(b => b.id !== block.id))
-    
-    // Fire and forget
-    fetch('/api/skip', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ blockId: block.id }),
-    }).catch(console.error)
-  }, [filteredBlocks])
+    // Get selected matches in order
+    const selectedMatches = aggregatedResult.matches
+      .filter(m => selectedRefs.has(m.block.id))
+      .map((match, i) => ({
+        ...match,
+        refNum: i + 1,
+        isPrimary: match.block.id === primaryRef,
+      }));
 
-  const deleteBlock = useCallback(() => {
-    if (filteredBlocks.length === 0) return
-    
-    const block = filteredBlocks[0]
-    
-    // Instant feedback
-    vibrate([20, 20])
-    setLastAction(null)
-    
-    // Remove from UI immediately
-    setBlocks(prev => prev.filter(b => b.id !== block.id))
-    
-    // Fire and forget - don't wait for API
-    fetch('/api/delete', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ blockId: block.id }),
-    }).catch(console.error)
-  }, [filteredBlocks])
+    if (selectedMatches.length === 0) return '';
 
-  const undo = useCallback(() => {
-    if (!lastAction || undoing) return
-    
-    vibrate(10)
-    
-    // Add block back to local state immediately
-    setBlocks(prev => [lastAction.block, ...prev])
-    setLastAction(null)
-    
-    // Fire undo API in background
-    fetch('/api/undo', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        blockId: lastAction.block.id, 
-        channel: lastAction.isCustom ? undefined : lastAction.channel,
-        customChannel: lastAction.isCustom ? lastAction.channel : undefined,
-        isSkip: lastAction.isSkip,
-      }),
-    }).catch(console.error)
-  }, [lastAction, undoing])
+    let prompt = `I'm building ${aggregatedResult.queryOneLiner}. Here are references from my collection:\n\n`;
 
-  const handleCreateChannel = async () => {
-    if (!newChannelName.trim()) return
-    const channelName = newChannelName.trim()
-    await classify('', channelName, true)
-    // Add to session channels so it appears as a button
-    if (!sessionChannels.includes(channelName)) {
-      setSessionChannels(prev => [...prev, channelName])
+    selectedMatches.forEach((match) => {
+      const primaryTag = match.isPrimary ? ' (PRIMARY)' : '';
+      prompt += `${match.refNum}. [attach ref-${match.refNum}.jpg] - ${match.relevanceNote}${primaryTag}\n`;
+    });
+
+    prompt += `\nMatch the aesthetic of #1${primaryRef ? '' : ' primarily'}. `;
+    if (selectedMatches.length > 1) {
+      prompt += `Use the others as supporting context.`;
     }
-    setNewChannelName('')
-    setShowCreateModal(false)
-  }
 
-  const handleExistingChannel = async (channelTitle: string) => {
-    await classify('', channelTitle, false)
-    // Add to session channels so it appears as a button for quick access
-    if (!sessionChannels.includes(channelTitle)) {
-      setSessionChannels(prev => [...prev, channelTitle])
-    }
-    setShowCreateModal(false)
-  }
+    return prompt;
+  }, [aggregatedResult, selectedRefs, primaryRef]);
 
-  // Touch handlers for swipe
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX
-  }
+  // Copy minimal prompt to clipboard
+  const handleCopyPrompt = useCallback(async () => {
+    const prompt = generatePrompt();
+    await navigator.clipboard.writeText(prompt);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }, [generatePrompt]);
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    touchEndX.current = e.touches[0].clientX
-  }
+  // Download selected images
+  const downloadImages = useCallback(async () => {
+    if (!aggregatedResult || isExporting) return;
 
-  const handleTouchEnd = () => {
-    const diff = touchStartX.current - touchEndX.current
-    if (Math.abs(diff) > 80) {
-      if (diff > 0) {
-        skip()
-      } else if (lastAction) {
-        undo()
-      }
-    }
-  }
+    const selectedMatches = aggregatedResult.matches.filter(m => selectedRefs.has(m.block.id));
+    if (selectedMatches.length === 0) return;
 
-  // Keyboard shortcuts
-  useEffect(() => {
-    function handleKey(e: KeyboardEvent) {
-      // Close lightbox on Escape
-      if (e.key === 'Escape') {
-        if (expandedImage) {
-          setExpandedImage(null)
-          return
-        }
-        if (expandedText) {
-          setExpandedText(null)
-          return
-        }
-        if (showCreateModal) {
-          setShowCreateModal(false)
-          return
-        }
-      }
+    setIsExporting(true);
+    try {
+      const response = await fetch('/api/export-pack', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          matches: selectedMatches,
+          queryOneLiner: aggregatedResult.queryOneLiner,
+          primaryId: primaryRef,
+        }),
+      });
+
+      const data = await response.json();
       
-      // Don't process other shortcuts if modal/lightbox open
-      if (showCreateModal || expandedImage || expandedText) return
-      
-      const num = parseInt(e.key)
-      if (num >= 1 && num <= categories.length) {
-        const cat = categories[num - 1]
-        if (cat.isCustom) {
-          classify('', cat.label, false)
-        } else {
-          classify(cat.key)
-        }
-      } else if (e.key.toLowerCase() === 's') {
-        skip()
-      } else if (e.key.toLowerCase() === 'd' || e.key === 'Backspace') {
-        deleteBlock()
-      } else if (e.key.toLowerCase() === 'z') {
-        undo()
-      } else if (e.key.toLowerCase() === 'n') {
-        setShowCreateModal(true)
-      } else if (e.key.toLowerCase() === 'r') {
-        loadBlocks()
-      } else if (e.key.toLowerCase() === 'f') {
-        // Cycle through filters
-        const filters = ['all', 'image', 'link', 'text', 'media']
-        const currentIndex = filters.indexOf(typeFilter)
-        setTypeFilter(filters[(currentIndex + 1) % filters.length])
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to download images');
       }
+
+      // Download the ZIP
+      const binaryString = atob(data.zip);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      const blob = new Blob([bytes], { type: 'application/zip' });
+      
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `refs-${Date.now()}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err: any) {
+      console.error('Download failed:', err);
+      alert('Failed to download: ' + err.message);
+    } finally {
+      setIsExporting(false);
     }
-    window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
-  }, [classify, skip, deleteBlock, undo, categories, showCreateModal, loadBlocks, expandedImage, expandedText, typeFilter])
+  }, [aggregatedResult, selectedRefs, primaryRef, isExporting]);
 
-  if (loading) {
-    return (
-      <div style={styles.container}>
-        <div style={styles.loadingScreen}>
-          <div style={styles.spinner} />
-          <p style={styles.loadingText}>Loading blocks from Are.na...</p>
-          <p style={styles.loadingSubtext}>This syncs across all your devices</p>
-        </div>
-      </div>
-    )
-  }
+  // Toggle selection
+  const toggleSelection = useCallback((id: number) => {
+    setSelectedRefs(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+        // If we unselected the primary, clear it
+        if (primaryRef === id) {
+          setPrimaryRef(null);
+        }
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }, [primaryRef]);
 
-  if (error) {
-    return (
-      <div style={styles.container}>
-        <div style={styles.errorScreen}>
-          <div style={styles.errorIcon}>⚠️</div>
-          <h2 style={styles.errorTitle}>Something went wrong</h2>
-          <p style={styles.errorText}>{error}</p>
-          <button onClick={() => { setError(null); loadBlocks(); }} style={styles.retryBtn}>
-            Try again
-          </button>
-        </div>
-      </div>
-    )
-  }
+  // Set as primary
+  const setAsPrimary = useCallback((id: number) => {
+    // Ensure it's selected
+    setSelectedRefs(prev => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+    setPrimaryRef(id);
+  }, []);
 
-  if (filteredBlocks.length === 0) {
-    return (
-      <div style={styles.container}>
-        <div style={styles.doneScreen}>
-          <div style={styles.doneIcon}>🎉</div>
-          <h1 style={styles.doneTitle}>
-            {blocks.length === 0 ? 'All caught up!' : `No ${typeFilter}s left`}
-          </h1>
-          <p style={styles.doneText}>
-            {blocks.length === 0 
-              ? 'No more blocks to classify' 
-              : `${blocks.length} other blocks remaining`}
-          </p>
-          {blocks.length > 0 && (
-            <button onClick={() => setTypeFilter('all')} style={styles.refreshBtn}>
-              Show All
-            </button>
-          )}
-          <button onClick={loadBlocks} style={{...styles.refreshBtn, marginTop: 8}}>
-            Refresh
-          </button>
-        </div>
-      </div>
-    )
-  }
-
-  const block = filteredBlocks[0]
-  const title = block.title || block.source?.title || '[Untitled]'
-  const imageUrl = block.image?.display?.url || block.image?.thumb?.url
+  const reset = useCallback(() => {
+    setImages([]);
+    setSelectedRefs(new Set());
+    setPrimaryRef(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }, []);
 
   return (
-    <div 
-      style={styles.container}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: STYLES.colors.bgPrimary,
+      fontFamily: STYLES.typography.family,
+      color: STYLES.colors.textPrimary,
+    }}>
       {/* Header */}
-      <div style={styles.header}>
-        <span style={styles.remaining}>{filteredBlocks.length} of {blocks.length}</span>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <a href="/match" style={styles.matchLink}>
-            🎯 Match
-          </a>
-          <button onClick={loadBlocks} style={styles.refreshSmall} disabled={loading}>
-            ↻
-          </button>
-        </div>
-      </div>
-
-      {/* Type filters */}
-      <div style={styles.filterRow}>
-        {[
-          { key: 'all', label: 'All', icon: '📋' },
-          { key: 'image', label: 'Images', icon: '🖼️' },
-          { key: 'link', label: 'Links', icon: '🔗' },
-          { key: 'text', label: 'Text', icon: '📝' },
-          { key: 'media', label: 'Media', icon: '🎬' },
-        ].map(f => (
-          <button
-            key={f.key}
-            onClick={() => setTypeFilter(f.key)}
-            style={{
-              ...styles.filterPill,
-              backgroundColor: typeFilter === f.key ? '#333' : '#1a1a1a',
-              borderColor: typeFilter === f.key ? '#555' : '#222',
-            }}
-          >
-            <span>{f.icon}</span>
-            <span style={styles.filterCount}>
-              {typeCounts[f.key as keyof typeof typeCounts]}
-            </span>
-          </button>
-        ))}
-      </div>
-
-      {/* Undo toast */}
-      {lastAction && (
-        <button onClick={undo} disabled={undoing} style={styles.undoToast}>
-          <span>→ {lastAction.channelLabel}</span>
-          <span style={styles.undoBtn}>{undoing ? '...' : 'UNDO'}</span>
-        </button>
-      )}
-
-      {/* Card */}
-      <div 
-        style={{
-          ...styles.card,
-          transform: slideDirection === 'left' ? 'translateX(-100%)' : 
-                     slideDirection === 'right' ? 'translateX(100%)' : 'translateX(0)',
-          opacity: slideDirection ? 0 : 1,
-        }}
-      >
-        <div style={styles.cardHeader}>
-          <span style={styles.blockType}>{block.class}</span>
-          {block.source?.url && (
-            <a 
-              href={block.source.url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              style={styles.urlBadge}
-            >
-              {(() => {
-                try {
-                  return new URL(block.source.url).hostname.replace('www.', '')
-                } catch {
-                  return 'Link'
-                }
-              })()}
-            </a>
-          )}
-        </div>
-        
-        <h2 style={styles.title}>{title}</h2>
-
-        {imageUrl && (
-          <img 
-            src={imageUrl} 
-            alt="" 
-            style={styles.preview} 
-            loading="eager"
-            onClick={() => setExpandedImage(imageUrl)}
-          />
-        )}
-
-        {(block.content || block.description) && (
+      <header style={{
+        padding: `${STYLES.spacing.md} ${STYLES.spacing.lg}`,
+        borderBottom: `1px solid ${STYLES.colors.border}`,
+        backgroundColor: STYLES.colors.bgSecondary,
+      }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <p style={styles.content}>
-              {(block.content || block.description || '').slice(0, 180)}
-              {(block.content || block.description || '').length > 180 && '...'}
+            <h1 style={{
+              fontSize: '20px',
+              fontWeight: STYLES.typography.headingWeight,
+              margin: 0,
+            }}>
+              Reference Matcher
+            </h1>
+            <p style={{
+              fontSize: '14px',
+              color: STYLES.colors.textSecondary,
+              margin: '4px 0 0 0',
+            }}>
+              Drop a screenshot of your WIP → get relevant references from your Are.na
             </p>
-            <button 
-              style={styles.readMoreBtn}
-              onClick={() => setExpandedText(block.content || block.description || '')}
-            >
-              📖 Read full text
-            </button>
           </div>
-        )}
-
-        {block.class !== 'Text' && block.description && !block.content && (
-          <p style={styles.description}>{block.description}</p>
-        )}
-
-        <div style={styles.sourceChannels}>
-          {block.sourceChannels.slice(0, 3).map(ch => (
-            <span key={ch} style={styles.channelTag}>{ch}</span>
-          ))}
-          {block.sourceChannels.length > 3 && (
-            <span style={styles.channelTag}>+{block.sourceChannels.length - 3}</span>
-          )}
-        </div>
-      </div>
-
-      {/* Action buttons */}
-      <div style={styles.actions}>
-        {categories.map((cat, index) => (
-          <button
-            key={cat.key}
-            onClick={() => cat.isCustom ? classify('', cat.label, false) : classify(cat.key)}
+          <a 
+            href="/classify" 
             style={{
-              ...styles.actionBtn,
-              backgroundColor: cat.color,
+              backgroundColor: STYLES.colors.bgPrimary,
+              color: STYLES.colors.textSecondary,
+              fontSize: '13px',
+              fontWeight: '500',
+              padding: '8px 14px',
+              borderRadius: STYLES.radius.sm,
+              textDecoration: 'none',
+              border: `1px solid ${STYLES.colors.border}`,
+              transition: `all ${STYLES.motion.duration} ${STYLES.motion.easing}`,
             }}
           >
-            <span style={styles.actionIcon}>{cat.icon}</span>
-            <div style={styles.actionText}>
-              <span style={styles.actionLabel}>{cat.label}</span>
-              <span style={styles.actionHint}>{cat.hint}</span>
-            </div>
-            <span style={styles.shortcutBadge}>{index + 1}</span>
-          </button>
-        ))}
-        
-        {/* New channel button */}
-        <button
-          onClick={() => setShowCreateModal(true)}
+            Classify →
+          </a>
+        </div>
+      </header>
+
+      <main style={{
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: STYLES.spacing.lg,
+      }}>
+        <style>{`
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
+
+        {/* Drop Zone - always visible for adding more images */}
+        <div
+          onClick={handleClick}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
           style={{
-            ...styles.actionBtn,
-            ...styles.newChannelBtn,
+            border: `2px dashed ${isDragging ? STYLES.colors.accent : STYLES.colors.border}`,
+            borderRadius: STYLES.radius.md,
+            padding: images.length > 0 ? STYLES.spacing.md : STYLES.spacing.xl,
+            textAlign: 'center',
+            cursor: 'pointer',
+            backgroundColor: isDragging ? 'rgba(0,0,0,0.02)' : 'transparent',
+            transition: `all ${STYLES.motion.duration} ${STYLES.motion.easing}`,
+            marginBottom: images.length > 0 ? STYLES.spacing.lg : 0,
           }}
         >
-          <span style={styles.actionIcon}>➕</span>
-          <div style={styles.actionText}>
-            <span style={styles.actionLabel}>New Channel</span>
-            <span style={styles.actionHint}>Create or pick existing</span>
-          </div>
-          <span style={styles.shortcutBadge}>N</span>
-        </button>
-
-        {/* Bottom row: Skip and Delete */}
-        <div style={styles.bottomRow}>
-          <button
-            onClick={skip}
-            style={{
-              ...styles.actionBtn,
-              ...styles.skipBtn,
-              flex: 1,
-            }}
-          >
-            <span style={styles.actionIcon}>⏭️</span>
-            <div style={styles.actionText}>
-              <span style={styles.actionLabel}>Skip</span>
-              <span style={styles.actionHint}>Later</span>
-            </div>
-            <span style={styles.shortcutBadge}>S</span>
-          </button>
-
-          <button
-            onClick={deleteBlock}
-            style={{
-              ...styles.actionBtn,
-              ...styles.deleteBtn,
-              flex: 1,
-            }}
-          >
-            <span style={styles.actionIcon}>🗑️</span>
-            <div style={styles.actionText}>
-              <span style={styles.actionLabel}>Delete</span>
-              <span style={styles.actionHint}>Remove</span>
-            </div>
-            <span style={styles.shortcutBadge}>D</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Swipe hint */}
-      <p style={styles.swipeHint}>← swipe to skip • swipe to undo →</p>
-
-      {/* Image lightbox */}
-      {expandedImage && (
-        <div 
-          style={styles.lightbox}
-          onClick={() => setExpandedImage(null)}
-        >
-          <img 
-            src={expandedImage} 
-            alt="" 
-            style={styles.lightboxImage}
-            onClick={(e) => e.stopPropagation()}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleFileChange}
+            style={{ display: 'none' }}
           />
-          <button style={styles.lightboxClose} onClick={() => setExpandedImage(null)}>
-            ✕
-          </button>
+          
+          {images.length === 0 ? (
+            <>
+              <div style={{
+                width: '64px',
+                height: '64px',
+                margin: '0 auto 16px',
+                backgroundColor: STYLES.colors.border,
+                borderRadius: STYLES.radius.md,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '28px',
+              }}>
+                📸
+              </div>
+              <p style={{
+                fontSize: '16px',
+                fontWeight: STYLES.typography.headingWeight,
+                margin: '0 0 8px 0',
+              }}>
+                Drop your screenshots here
+              </p>
+              <p style={{
+                fontSize: '14px',
+                color: STYLES.colors.textMuted,
+                margin: 0,
+              }}>
+                or click to browse · supports multiple images
+              </p>
+            </>
+          ) : (
+            <p style={{
+              fontSize: '14px',
+              color: STYLES.colors.textSecondary,
+              margin: 0,
+            }}>
+              + Drop more screenshots or click to add
+            </p>
+          )}
         </div>
-      )}
 
-      {/* Text lightbox */}
-      {expandedText && (
-        <div 
-          style={styles.lightbox}
-          onClick={() => setExpandedText(null)}
-        >
-          <div 
-            style={styles.textLightbox}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <p style={styles.textLightboxContent}>{expandedText}</p>
-          </div>
-          <button style={styles.lightboxClose} onClick={() => setExpandedText(null)}>
-            ✕
-          </button>
-        </div>
-      )}
-
-      {/* Create channel modal */}
-      {showCreateModal && (
-        <div style={styles.modalOverlay} onClick={() => setShowCreateModal(false)}>
-          <div style={styles.modal} onClick={e => e.stopPropagation()}>
-            <h3 style={styles.modalTitle}>Add to channel</h3>
-            
-            {/* Create new */}
-            <div style={styles.createSection}>
-              <input
-                type="text"
-                placeholder="New channel name..."
-                value={newChannelName}
-                onChange={e => setNewChannelName(e.target.value)}
-                style={styles.input}
-                autoFocus
-                onKeyDown={e => e.key === 'Enter' && handleCreateChannel()}
-              />
-              <button 
-                onClick={handleCreateChannel}
-                disabled={!newChannelName.trim()}
+        {/* Uploaded Images Grid */}
+        {images.length > 0 && (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+            gap: STYLES.spacing.sm,
+            marginBottom: STYLES.spacing.lg,
+          }}>
+            {images.map((img) => (
+              <div
+                key={img.id}
                 style={{
-                  ...styles.createBtn,
-                  opacity: newChannelName.trim() ? 1 : 0.5,
+                  position: 'relative',
+                  aspectRatio: '4/3',
+                  borderRadius: STYLES.radius.sm,
+                  overflow: 'hidden',
+                  backgroundColor: '#F5F5F5',
+                  border: `1px solid ${STYLES.colors.border}`,
                 }}
               >
-                Create
-              </button>
-            </div>
+                <img
+                  src={img.previewUrl}
+                  alt="Screenshot"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    opacity: img.status === 'processing' ? 0.5 : 1,
+                    transition: `opacity ${STYLES.motion.duration} ${STYLES.motion.easing}`,
+                  }}
+                />
+                
+                {/* Status indicator */}
+                {img.status === 'processing' && (
+                  <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                    <div style={{
+                      width: '24px',
+                      height: '24px',
+                      border: `2px solid ${STYLES.colors.border}`,
+                      borderTopColor: STYLES.colors.accent,
+                      borderRadius: '50%',
+                      animation: 'spin 1s linear infinite',
+                    }} />
+                  </div>
+                )}
+                
+                {img.status === 'done' && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '6px',
+                    right: '6px',
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: STYLES.colors.success,
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '12px',
+                    color: '#fff',
+                  }}>
+                    ✓
+                  </div>
+                )}
+                
+                {img.status === 'error' && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '6px',
+                    right: '6px',
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: '#DC2626',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '12px',
+                    color: '#fff',
+                  }}>
+                    !
+                  </div>
+                )}
 
-            {/* Existing channels */}
-            <div style={styles.channelList}>
-              <p style={styles.channelListLabel}>Or pick existing:</p>
-              <div style={styles.channelScroll}>
-                {allChannels
-                  .filter(ch => !ch.isSystem)
-                  .slice(0, 15)
-                  .map(ch => (
-                    <button
-                      key={ch.slug}
-                      onClick={() => handleExistingChannel(ch.title)}
-                      style={styles.channelOption}
-                    >
-                      <span>{ch.title}</span>
-                      <span style={styles.channelCount}>{ch.count}</span>
-                    </button>
-                  ))}
+                {/* Remove button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeImage(img.id);
+                  }}
+                  style={{
+                    position: 'absolute',
+                    top: '6px',
+                    left: '6px',
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: 'rgba(0,0,0,0.6)',
+                    border: 'none',
+                    borderRadius: '50%',
+                    color: '#fff',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    opacity: 0.7,
+                    transition: `opacity ${STYLES.motion.duration} ${STYLES.motion.easing}`,
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.7'; }}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Error */}
+        {error && (
+          <div style={{
+            backgroundColor: '#FEE2E2',
+            color: '#DC2626',
+            padding: STYLES.spacing.md,
+            borderRadius: STYLES.radius.sm,
+            marginBottom: STYLES.spacing.md,
+          }}>
+            {error}
+          </div>
+        )}
+
+        {/* Results */}
+        {aggregatedResult && (
+          <div>
+            {/* Actions Bar - simplified */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: STYLES.spacing.md,
+                flexWrap: 'wrap',
+              gap: STYLES.spacing.sm,
+              }}>
+              <div>
+                <h3 style={{
+                    fontSize: '14px',
+                    fontWeight: STYLES.typography.headingWeight,
+                    color: STYLES.colors.textSecondary,
+                  margin: 0,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                  }}>
+                  {aggregatedResult.matches.length} References Found
+                  {isLoading && <span style={{ fontWeight: '400', marginLeft: '8px' }}>(analyzing...)</span>}
+                </h3>
+                <p style={{
+                  fontSize: '13px',
+                  color: STYLES.colors.textMuted,
+                  margin: '4px 0 0 0',
+                }}>
+                  {selectedRefs.size} selected · Click card to toggle · Double-click for primary
+                </p>
+                </div>
+
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  <button
+                  onClick={downloadImages}
+                  disabled={isLoading || isExporting || selectedRefs.size === 0}
+                    style={{
+                    backgroundColor: (isLoading || isExporting || selectedRefs.size === 0) 
+                      ? STYLES.colors.textMuted 
+                      : STYLES.colors.accent,
+                      color: '#FFFFFF',
+                      border: 'none',
+                      padding: '10px 20px',
+                      borderRadius: STYLES.radius.sm,
+                      fontSize: '14px',
+                      fontWeight: STYLES.typography.headingWeight,
+                    cursor: (isLoading || isExporting || selectedRefs.size === 0) ? 'not-allowed' : 'pointer',
+                      transition: `all ${STYLES.motion.duration} ${STYLES.motion.easing}`,
+                  }}
+                >
+                  {isExporting ? 'Downloading...' : `Download ${selectedRefs.size} Images`}
+                  </button>
+                  <button
+                  onClick={handleCopyPrompt}
+                  disabled={isLoading || selectedRefs.size === 0}
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: STYLES.colors.textPrimary,
+                      border: `1px solid ${STYLES.colors.border}`,
+                      padding: '10px 20px',
+                      borderRadius: STYLES.radius.sm,
+                      fontSize: '14px',
+                      fontWeight: STYLES.typography.headingWeight,
+                    cursor: (isLoading || selectedRefs.size === 0) ? 'not-allowed' : 'pointer',
+                      transition: `all ${STYLES.motion.duration} ${STYLES.motion.easing}`,
+                    }}
+                  >
+                  {copied ? '✓ Copied!' : 'Copy Prompt'}
+                  </button>
+                  <button
+                    onClick={reset}
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: STYLES.colors.textSecondary,
+                      border: `1px solid ${STYLES.colors.border}`,
+                      padding: '10px 20px',
+                      borderRadius: STYLES.radius.sm,
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      transition: `all ${STYLES.motion.duration} ${STYLES.motion.easing}`,
+                    }}
+                  >
+                  Clear
+                  </button>
               </div>
             </div>
 
-            <button onClick={() => setShowCreateModal(false)} style={styles.cancelBtn}>
-              Cancel
-            </button>
+            {/* Reference Grid - larger images, simpler cards */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+              gap: STYLES.spacing.md,
+            }}>
+              {aggregatedResult.matches.map((match) => {
+                const isSelected = selectedRefs.has(match.block.id);
+                const isPrimary = primaryRef === match.block.id;
+                
+                return (
+                  <div
+                  key={match.block.id}
+                    onClick={() => toggleSelection(match.block.id)}
+                    onDoubleClick={() => setAsPrimary(match.block.id)}
+                  style={{
+                    backgroundColor: STYLES.colors.bgSecondary,
+                    borderRadius: STYLES.radius.md,
+                    overflow: 'hidden',
+                      cursor: 'pointer',
+                      boxShadow: isSelected ? STYLES.shadow.lifted : STYLES.shadow.subtle,
+                      border: isPrimary 
+                        ? `2px solid ${STYLES.colors.accent}` 
+                        : isSelected 
+                          ? `2px solid ${STYLES.colors.success}` 
+                          : '2px solid transparent',
+                    transition: `all ${STYLES.motion.duration} ${STYLES.motion.easing}`,
+                      opacity: isSelected ? 1 : 0.7,
+                  }}
+                >
+                    {/* Large Image */}
+                  {match.block.image_url && (
+                    <div style={{
+                      aspectRatio: '16/10',
+                      overflow: 'hidden',
+                      backgroundColor: '#F5F5F5',
+                        position: 'relative',
+                    }}>
+                      <img
+                        src={match.block.image_url}
+                        alt={match.block.title || 'Reference'}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                        }}
+                      />
+
+                        {/* Selection indicator */}
+                    <div style={{
+                          position: 'absolute',
+                          top: '12px',
+                          left: '12px',
+                      display: 'flex',
+                          gap: '8px',
+                      alignItems: 'center',
+                        }}>
+                          <div style={{
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '6px',
+                            backgroundColor: isSelected ? STYLES.colors.success : 'rgba(255,255,255,0.9)',
+                            border: isSelected ? 'none' : `2px solid ${STYLES.colors.border}`,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '14px',
+                            color: '#fff',
+                            fontWeight: '600',
+                          }}>
+                            {isSelected && '✓'}
+                          </div>
+                          {isPrimary && (
+                      <span style={{
+                        backgroundColor: STYLES.colors.accent,
+                              color: '#fff',
+                              padding: '4px 10px',
+                        borderRadius: STYLES.radius.full,
+                        fontSize: '11px',
+                        fontWeight: '600',
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.5px',
+                      }}>
+                              Primary
+                      </span>
+                          )}
+                    </div>
+
+                        {/* Open in Are.na */}
+                        <a
+                          href={match.block.arena_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          style={{
+                            position: 'absolute',
+                            top: '12px',
+                            right: '12px',
+                            backgroundColor: 'rgba(0,0,0,0.6)',
+                            color: '#fff',
+                            padding: '6px 10px',
+                            borderRadius: STYLES.radius.sm,
+                            fontSize: '11px',
+                            textDecoration: 'none',
+                            opacity: 0.8,
+                            transition: `opacity ${STYLES.motion.duration} ${STYLES.motion.easing}`,
+                          }}
+                          onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.8'; }}
+                        >
+                          Are.na ↗
+                        </a>
+                      </div>
+                    )}
+
+                    {/* Human-readable explanation */}
+                    <div style={{ padding: STYLES.spacing.md }}>
+                    <p style={{
+                        fontSize: '14px',
+                      fontWeight: STYLES.typography.bodyWeight,
+                        margin: 0,
+                        lineHeight: 1.5,
+                      color: STYLES.colors.textPrimary,
+                      }}>
+                        {match.relevanceNote}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {aggregatedResult.matches.length === 0 && !isLoading && (
+              <div style={{
+                textAlign: 'center',
+                padding: STYLES.spacing.xl,
+                color: STYLES.colors.textMuted,
+              }}>
+                <p>No matching references found.</p>
+                <p style={{ fontSize: '14px' }}>
+                  Try adding more references to your Are.na UI/UX channel.
+                </p>
+              </div>
+            )}
           </div>
-        </div>
-      )}
-
+        )}
+      </main>
     </div>
-  )
-}
-
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    minHeight: '100dvh',
-    backgroundColor: '#0a0a0a',
-    color: '#e0e0e0',
-    padding: '12px',
-    paddingBottom: '24px',
-    display: 'flex',
-    flexDirection: 'column',
-    maxWidth: '500px',
-    margin: '0 auto',
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '12px',
-  },
-  remaining: {
-    fontSize: '13px',
-    color: '#666',
-    fontWeight: 500,
-  },
-  refreshSmall: {
-    background: 'none',
-    border: 'none',
-    color: '#444',
-    fontSize: '18px',
-    cursor: 'pointer',
-    padding: '4px 8px',
-  },
-  matchLink: {
-    backgroundColor: '#1a1a1a',
-    color: '#22c55e',
-    fontSize: '12px',
-    fontWeight: 600,
-    padding: '6px 12px',
-    borderRadius: '6px',
-    textDecoration: 'none',
-    border: '1px solid #333',
-  },
-  filterRow: {
-    display: 'flex',
-    gap: '6px',
-    marginBottom: '12px',
-    overflowX: 'auto',
-    paddingBottom: '4px',
-  },
-  filterPill: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '4px',
-    padding: '6px 10px',
-    border: '1px solid #222',
-    borderRadius: '16px',
-    fontSize: '12px',
-    color: '#888',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    whiteSpace: 'nowrap',
-  },
-  filterCount: {
-    fontSize: '11px',
-    opacity: 0.7,
-  },
-  undoToast: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '10px 14px',
-    backgroundColor: '#1a1a1a',
-    border: '1px solid #2a2a2a',
-    borderRadius: '8px',
-    marginBottom: '12px',
-    fontSize: '13px',
-    color: '#888',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-  },
-  undoBtn: {
-    color: '#22c55e',
-    fontWeight: 600,
-    fontSize: '12px',
-  },
-  card: {
-    backgroundColor: '#111',
-    border: '1px solid #1a1a1a',
-    borderRadius: '12px',
-    padding: '14px',
-    marginBottom: '12px',
-    transition: 'transform 0.08s ease-out, opacity 0.08s ease-out',
-    willChange: 'transform, opacity',
-  },
-  cardHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    marginBottom: '10px',
-  },
-  blockType: {
-    backgroundColor: '#1a1a1a',
-    padding: '3px 8px',
-    borderRadius: '4px',
-    fontSize: '10px',
-    color: '#666',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
-  },
-  urlBadge: {
-    backgroundColor: '#0a2a1a',
-    padding: '3px 8px',
-    borderRadius: '4px',
-    fontSize: '10px',
-    color: '#22c55e',
-    textDecoration: 'none',
-  },
-  title: {
-    fontSize: '16px',
-    fontWeight: 600,
-    color: '#fff',
-    margin: 0,
-    lineHeight: 1.3,
-    wordBreak: 'break-word',
-  },
-  preview: {
-    width: '100%',
-    maxHeight: '180px',
-    objectFit: 'contain',
-    borderRadius: '8px',
-    backgroundColor: '#000',
-    marginTop: '10px',
-    cursor: 'zoom-in',
-  },
-  lightbox: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.95)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 200,
-    padding: '20px',
-  },
-  lightboxImage: {
-    maxWidth: '100%',
-    maxHeight: '100%',
-    objectFit: 'contain',
-    borderRadius: '4px',
-  },
-  lightboxClose: {
-    position: 'absolute',
-    top: '16px',
-    right: '16px',
-    background: 'rgba(255,255,255,0.1)',
-    border: 'none',
-    color: '#fff',
-    fontSize: '20px',
-    width: '40px',
-    height: '40px',
-    borderRadius: '50%',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-  },
-  textLightbox: {
-    maxWidth: '600px',
-    maxHeight: '80vh',
-    backgroundColor: '#111',
-    borderRadius: '12px',
-    padding: '24px',
-    overflowY: 'auto',
-    margin: '20px',
-  },
-  textLightboxContent: {
-    fontSize: '16px',
-    lineHeight: 1.7,
-    color: '#e0e0e0',
-    margin: 0,
-    whiteSpace: 'pre-wrap',
-  },
-  content: {
-    fontSize: '13px',
-    color: '#888',
-    lineHeight: 1.5,
-    margin: '10px 0 0 0',
-  },
-  readMoreBtn: {
-    background: 'none',
-    border: 'none',
-    color: '#22c55e',
-    fontSize: '12px',
-    padding: '8px 0',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    fontWeight: 500,
-  },
-  description: {
-    fontSize: '12px',
-    color: '#666',
-    marginTop: '8px',
-    fontStyle: 'italic',
-  },
-  sourceChannels: {
-    marginTop: '10px',
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '4px',
-  },
-  channelTag: {
-    backgroundColor: '#151515',
-    padding: '2px 6px',
-    borderRadius: '3px',
-    fontSize: '10px',
-    color: '#555',
-  },
-  actions: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '8px',
-    flex: 1,
-  },
-  actionBtn: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
-    padding: '14px 16px',
-    border: 'none',
-    borderRadius: '10px',
-    fontSize: '15px',
-    fontWeight: 600,
-    color: '#fff',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    WebkitTapHighlightColor: 'transparent',
-    transition: 'transform 0.1s',
-  },
-  actionIcon: {
-    fontSize: '20px',
-    width: '28px',
-    textAlign: 'center',
-  },
-  actionText: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    gap: '1px',
-    flex: 1,
-  },
-  actionLabel: {
-    fontSize: '15px',
-  },
-  actionHint: {
-    fontSize: '11px',
-    opacity: 0.7,
-    fontWeight: 400,
-  },
-  shortcutBadge: {
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    padding: '4px 8px',
-    borderRadius: '4px',
-    fontSize: '11px',
-    fontWeight: 500,
-  },
-  newChannelBtn: {
-    backgroundColor: '#1a1a1a',
-    border: '1px dashed #333',
-  },
-  bottomRow: {
-    display: 'flex',
-    gap: '8px',
-  },
-  skipBtn: {
-    backgroundColor: '#1a1a1a',
-  },
-  deleteBtn: {
-    backgroundColor: '#991b1b',
-  },
-  swipeHint: {
-    textAlign: 'center',
-    fontSize: '10px',
-    color: '#333',
-    marginTop: '8px',
-  },
-  loadingScreen: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '80vh',
-    gap: '12px',
-  },
-  spinner: {
-    width: '32px',
-    height: '32px',
-    border: '3px solid #1a1a1a',
-    borderTopColor: '#22c55e',
-    borderRadius: '50%',
-    animation: 'spin 1s linear infinite',
-  },
-  loadingText: {
-    color: '#666',
-    fontSize: '14px',
-  },
-  loadingSubtext: {
-    color: '#444',
-    fontSize: '12px',
-  },
-  errorScreen: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '80vh',
-    textAlign: 'center',
-    padding: '20px',
-  },
-  errorIcon: {
-    fontSize: '48px',
-    marginBottom: '16px',
-  },
-  errorTitle: {
-    fontSize: '18px',
-    marginBottom: '8px',
-  },
-  errorText: {
-    color: '#666',
-    fontSize: '14px',
-    marginBottom: '20px',
-  },
-  retryBtn: {
-    padding: '12px 24px',
-    backgroundColor: '#22c55e',
-    color: '#000',
-    border: 'none',
-    borderRadius: '8px',
-    fontSize: '14px',
-    fontWeight: 600,
-    cursor: 'pointer',
-  },
-  doneScreen: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '80vh',
-    textAlign: 'center',
-  },
-  doneIcon: {
-    fontSize: '64px',
-    marginBottom: '16px',
-  },
-  doneTitle: {
-    fontSize: '24px',
-    fontWeight: 700,
-    marginBottom: '8px',
-  },
-  doneText: {
-    color: '#666',
-    marginBottom: '24px',
-  },
-  refreshBtn: {
-    padding: '12px 24px',
-    backgroundColor: '#1a1a1a',
-    color: '#fff',
-    border: '1px solid #333',
-    borderRadius: '8px',
-    fontSize: '14px',
-    cursor: 'pointer',
-  },
-  modalOverlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.85)',
-    display: 'flex',
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-    zIndex: 100,
-  },
-  modal: {
-    backgroundColor: '#111',
-    borderRadius: '16px 16px 0 0',
-    padding: '20px',
-    width: '100%',
-    maxWidth: '500px',
-    maxHeight: '80vh',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  modalTitle: {
-    fontSize: '18px',
-    fontWeight: 600,
-    marginBottom: '16px',
-    textAlign: 'center',
-  },
-  createSection: {
-    display: 'flex',
-    gap: '8px',
-    marginBottom: '20px',
-  },
-  input: {
-    flex: 1,
-    padding: '12px',
-    backgroundColor: '#1a1a1a',
-    border: '1px solid #333',
-    borderRadius: '8px',
-    color: '#fff',
-    fontSize: '14px',
-    fontFamily: 'inherit',
-  },
-  createBtn: {
-    padding: '12px 20px',
-    backgroundColor: '#22c55e',
-    color: '#000',
-    border: 'none',
-    borderRadius: '8px',
-    fontSize: '14px',
-    fontWeight: 600,
-    cursor: 'pointer',
-  },
-  channelList: {
-    flex: 1,
-    minHeight: 0,
-    marginBottom: '16px',
-  },
-  channelListLabel: {
-    fontSize: '12px',
-    color: '#666',
-    marginBottom: '8px',
-  },
-  channelScroll: {
-    maxHeight: '200px',
-    overflowY: 'auto',
-  },
-  channelOption: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    padding: '12px',
-    backgroundColor: '#1a1a1a',
-    border: 'none',
-    borderRadius: '8px',
-    color: '#fff',
-    fontSize: '14px',
-    textAlign: 'left',
-    cursor: 'pointer',
-    marginBottom: '6px',
-    fontFamily: 'inherit',
-  },
-  channelCount: {
-    fontSize: '12px',
-    color: '#555',
-  },
-  cancelBtn: {
-    width: '100%',
-    padding: '12px',
-    backgroundColor: 'transparent',
-    border: '1px solid #333',
-    borderRadius: '8px',
-    color: '#666',
-    fontSize: '14px',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-  },
+  );
 }
 

@@ -1,38 +1,68 @@
-# Arena Reference Library
+# Arena Refs
 
-A system for building and querying a personal reference library backed by Are.na.
+A composable system for building and querying a personal reference library backed by Are.na.
+
+**Live**: [arena-refs.vercel.app](https://arena-refs.vercel.app)
 
 ## What This Is
 
 Two tools:
 
-1. **Reference Matcher** (`/match`) - Drop a screenshot of your WIP, get relevant references from your indexed Are.na library
-2. **Block Classifier** (`/`) - Tinder-like interface for organizing Are.na blocks into channels
+1. **Reference Matcher** (`/`) - Drop a screenshot of your WIP, get relevant references from your indexed Are.na library
+2. **Block Classifier** (`/classify`) - Tinder-like interface for organizing Are.na blocks into channels
 
 The core idea: you curate references in Are.na over time. This system makes them searchable and retrievable when you need them.
 
-## How It Works
+## Architecture
 
 ```
-Your Are.na Library
-       │
-       ▼
-┌──────────────────┐
-│  Index Blocks    │  npm run index-blocks
-│  (one-time)      │  Tags each block with component/style/context/vibe
-└──────────────────┘
-       │
-       ▼
-┌──────────────────┐
-│ Reference Matcher│  /match
-│                  │  1. Extract tags from your WIP screenshot
-│                  │  2. Find blocks with matching tags
-│                  │  3. Generate human-readable explanations
-│                  │  4. Output: images + minimal prompt for Claude
-└──────────────────┘
+arena-refs/
+├── core/                          # Headless, platform-agnostic logic
+│   ├── arena-client.ts            # Are.na API wrapper
+│   ├── matcher.ts                 # Image → reference matching
+│   ├── classifier.ts              # Block classification
+│   ├── types.ts                   # Shared TypeScript types
+│   └── index.ts                   # Clean exports
+│
+├── web/                           # Next.js web app
+│   ├── app/
+│   │   ├── page.tsx               # Reference Matcher (HOME)
+│   │   ├── classify/page.tsx      # Block Classifier
+│   │   └── api/                   # API routes
+│   ├── components/                # Shared React components
+│   └── lib/theme.ts               # Design tokens
+│
+├── src/                           # CLI tools
+│   ├── index-blocks.ts            # Index blocks with tags
+│   ├── anti-patterns.ts           # Extract anti-patterns
+│   └── ...
+│
+└── taste-profiles/                # Generated indexes (gitignored)
 ```
 
-The key insight: **Claude interprets the actual images directly**. This tool's job is finding the right references from your library. Claude's job is visual interpretation.
+## Composable Core
+
+The `core/` directory contains platform-agnostic logic that can be imported by:
+- **Web apps** (Next.js, React)
+- **Telegram bots**
+- **CLI tools**
+- **Any Node.js/Deno/Bun application**
+
+Example usage for a Telegram bot:
+
+```typescript
+import { ArenaClient, matchImageToReferences } from 'arena-refs/core'
+
+const client = new ArenaClient({ 
+  token: process.env.ARENA_TOKEN, 
+  userSlug: 'your-username' 
+})
+
+// Match an image to references
+const matches = await matchImageToReferences(imageBase64, index, { 
+  apiKey: process.env.GEMINI_API_KEY 
+})
+```
 
 ## Setup
 
@@ -66,8 +96,8 @@ npm install
 npm run dev
 ```
 
-- `/match` - Reference Matcher
-- `/` - Block Classifier
+- `/` - Reference Matcher (home)
+- `/classify` - Block Classifier
 
 ## Tag Taxonomy
 
@@ -116,26 +146,19 @@ npm run anti-patterns -- --channel=ui-ux-abc123
 npm run extract-styles -- --channel=ui-ux-abc123
 ```
 
-## Project Structure
+## Design System
 
-```
-arena-lib/
-├── web/                          # Next.js web app
-│   ├── app/
-│   │   ├── page.tsx              # Block Classifier
-│   │   ├── match/page.tsx        # Reference Matcher
-│   │   └── api/
-│   │       ├── match/route.ts    # Tag extraction + matching
-│   │       └── export-pack/      # Image download
-├── src/
-│   ├── index-blocks.ts           # Index blocks with tags
-│   ├── anti-patterns.ts          # Extract anti-patterns
-│   └── arena-client.ts           # Are.na API wrapper
-├── taste-profiles/               # Generated indexes (gitignored)
-│   └── [channel-slug]/
-│       └── index.json
-└── TAGS.md                       # Tag taxonomy
-```
+The web app uses a unified design system with:
+
+- Warm light theme (`#F2F0EC` background)
+- System fonts for performance
+- 12px border radius (rounded)
+- Subtle shadows
+- 200ms ease-out transitions
+
+Design tokens available in:
+- CSS: `web/app/globals.css`
+- JavaScript: `web/lib/theme.ts`
 
 ## License
 

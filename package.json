@@ -1,7 +1,7 @@
 {
-  "name": "arena-lib",
-  "version": "1.0.0",
-  "description": "One-time script to organize Are.na channels",
+  "name": "arena-refs",
+  "version": "2.0.0",
+  "description": "Reference matching and block classification for Are.na",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
@@ -23,6 +23,17 @@
   "devDependencies": {
     "@types/node": "^20.10.0",
     "typescript": "^5.3.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/arena-refs"
+  },
+  "keywords": [
+    "arena",
+    "are.na",
+    "reference",
+    "design",
+    "classification"
+  ],
+  "license": "MIT"
 }
-
