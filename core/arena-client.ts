@@ -147,6 +147,13 @@ export class ArenaClient {
     return this.fetch(`/channels/${slug}`);
   }
 
+  /**
+   * Update a channel's settings (title, status, etc.)
+   */
+  async updateChannel(slug: string, updates: { title?: string; status?: 'public' | 'closed' | 'private' }): Promise<ArenaChannel> {
+    return this.put<ArenaChannel>(`/channels/${slug}`, updates);
+  }
+
   // ============================================================================
   // BLOCK OPERATIONS
   // ============================================================================
