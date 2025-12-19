@@ -32,12 +32,17 @@ arena-refs/
 │   ├── components/                # Shared React components
 │   └── lib/theme.ts               # Design tokens
 │
-├── src/                           # CLI tools
+├── cli/                           # CLI tools (compiled to dist/)
 │   ├── index-blocks.ts            # Index blocks with tags
 │   ├── anti-patterns.ts           # Extract anti-patterns
 │   └── ...
 │
-└── taste-profiles/                # Generated indexes (gitignored)
+├── scripts/                       # Utility scripts
+│   ├── archive.js
+│   └── cleanup.js
+│
+└── data/                          # Generated indexes (gitignored)
+    └── taste-profiles/
 ```
 
 ## Composable Core
