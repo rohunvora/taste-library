@@ -1,0 +1,109 @@
+{
+  "id": "1741087",
+  "name": "Transit Status Display",
+  "description": "A data visualization displaying transit status using color-coded circles to represent the state of transit lines.",
+  "screen_type": "data-visualization",
+  "component_types": [
+    "data-display",
+    "timeline",
+    "button"
+  ],
+  "aesthetic_family": "flat-minimal",
+  "tags": [
+    "light-mode",
+    "desktop",
+    "b2c",
+    "transit",
+    "realtime",
+    "status"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "#F0F0F0",
+      "surface": "#FFFFFF",
+      "text_primary": "#333333",
+      "text_secondary": "#777777",
+      "accent": "#007BFF"
+    },
+    "radius": {
+      "containers": "0px",
+      "buttons": "4px"
+    },
+    "shadows": {
+      "default": "none"
+    },
+    "spacing": {
+      "base_unit": "4px",
+      "container_padding": "16px",
+      "element_gap": "8px"
+    },
+    "typography": {
+      "heading_weight": "600",
+      "body_weight": "400",
+      "heading_size": "18px",
+      "body_size": "14px",
+      "line_height": "1.4",
+      "font_style": "humanist-sans"
+    }
+  },
+  "atoms": [
+    {
+      "type": "color",
+      "name": "Status Circle - Green",
+      "description": "Represents a healthy or on-time status.",
+      "css": "background-color: #4CAF50;"
+    },
+    {
+      "type": "color",
+      "name": "Status Circle - Yellow",
+      "description": "Represents a minor delay or issue.",
+      "css": "background-color: #FFC107;"
+    },
+    {
+      "type": "color",
+      "name": "Status Circle - Orange",
+      "description": "Represents a moderate delay or issue.",
+      "css": "background-color: #FF9800;"
+    },
+    {
+      "type": "color",
+      "name": "Status Circle - Black",
+      "description": "Represents a significant delay or issue.",
+      "css": "background-color: #000000;"
+    },
+    {
+      "type": "typography",
+      "name": "Section Header",
+      "description": "Used for the main section titles (e.g., 'Today - Live').",
+      "css": "font-size: 18px; font-weight: 600; color: #333333;"
+    }
+  ],
+  "code": {
+    "css": ".status-container {\n  background-color: #F0F0F0;\n  padding: 16px;\n}\n\n.status-row {\n  display: flex;\n  align-items: center;\n  margin-bottom: 8px;\n}\n\n.status-circle {\n  width: 16px;\n  height: 16px;\n  border-radius: 50%;\n  margin-right: 4px;\n}\n\n.status-label {\n  font-size: 14px;\n  color: #777777;\n  margin-right: 8px;\n}",
+    "tailwind": "bg-gray-100 p-4 flex items-center mb-2"
+  },
+  "usage": {
+    "best_for": [
+      "Real-time status updates",
+      "Displaying the state of multiple systems at a glance",
+      "Transit information dashboards",
+      "Network monitoring",
+      "Simple data visualization"
+    ],
+    "avoid_for": [
+      "Complex data relationships",
+      "Situations requiring precise numerical data",
+      "Detailed historical analysis",
+      "When accessibility requires more than color-coding",
+      "Scenarios needing interactive data exploration"
+    ]
+  },
+  "source": {
+    "arena_id": 1741087,
+    "arena_url": "https://www.are.na/block/1741087",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIxNzQxMDg3L29yaWdpbmFsXzBiOGJhODRmZmI2YTg5YzQ1MjhiODg1YmM4ZWVjMzU2LnBuZyIsImVkaXRzIjp7InJlc2l6ZSI6eyJ3aWR0aCI6MTIwMCwiaGVpZ2h0IjoxMjAwLCJmaXQiOiJpbnNpZGUiLCJ3aXRob3V0RW5sYXJnZW1lbnQiOnRydWV9LCJ3ZWJwIjp7InF1YWxpdHkiOjc1fSwianBlZyI6eyJxdWFsaXR5Ijo3NX0sInJvdGF0ZSI6bnVsbH19?bc=1",
+    "title": "Transit Alliance Miami Metrorail Audit"
+  },
+  "extracted_at": "2025-12-19T07:27:50.517Z",
+  "extraction_version": "1.0.0"
+}

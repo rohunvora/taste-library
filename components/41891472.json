@@ -1,0 +1,102 @@
+{
+  "id": "41891472",
+  "name": "Compliance Product Landing",
+  "description": "A landing page showcasing a compliance product with a focus on onboarding and automated processes.",
+  "screen_type": "landing-page",
+  "component_types": [
+    "navigation",
+    "card",
+    "button",
+    "hero"
+  ],
+  "aesthetic_family": "warm-organic",
+  "tags": [
+    "b2b",
+    "compliance",
+    "fintech",
+    "onboarding"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "linear-gradient(to bottom, #F2F7F9, #FFFFFF)",
+      "surface": "#33302E",
+      "text_primary": "#FFFFFF",
+      "text_secondary": "#D3D3D3",
+      "accent": "#000000"
+    },
+    "radius": {
+      "containers": "16px",
+      "buttons": "9999px"
+    },
+    "shadows": {
+      "default": "0 4px 12px rgba(0,0,0,0.1)"
+    },
+    "spacing": {
+      "base_unit": "8px",
+      "container_padding": "24px",
+      "element_gap": "16px"
+    },
+    "typography": {
+      "heading_weight": "700",
+      "body_weight": "400",
+      "heading_size": "48px",
+      "body_size": "16px",
+      "line_height": "1.5",
+      "font_style": "humanist-sans"
+    }
+  },
+  "atoms": [
+    {
+      "type": "surface",
+      "name": "Dark Overlay",
+      "description": "Dark semi-transparent overlay for content sections.",
+      "css": "background-color: rgba(51, 48, 46, 0.8); border-radius: 16px;"
+    },
+    {
+      "type": "button",
+      "name": "Primary Button",
+      "description": "Solid black button with rounded corners for primary actions.",
+      "css": "background-color: #000000; color: #FFFFFF; border-radius: 9999px; padding: 12px 24px; font-weight: 500;"
+    },
+    {
+      "type": "typography",
+      "name": "Hero Heading",
+      "description": "Large, bold heading for the main page title.",
+      "css": "font-size: 48px; font-weight: 700; line-height: 1.2;"
+    },
+    {
+      "type": "navigation",
+      "name": "Main Navigation",
+      "description": "Horizontal navigation bar with product, customer, company and resources links.",
+      "css": "display: flex; justify-content: space-around; align-items: center; padding: 16px;"
+    }
+  ],
+  "code": {
+    "css": ".container { background: linear-gradient(to bottom, #F2F7F9, #FFFFFF); padding: 24px; } .dark-overlay { background-color: rgba(51, 48, 46, 0.8); border-radius: 16px; } .primary-button { background-color: #000000; color: #FFFFFF; border-radius: 9999px; padding: 12px 24px; font-weight: 500; }",
+    "tailwind": "bg-gradient-to-b from-gray-100 to-white p-6 rounded-lg bg-black text-white rounded-full px-8 py-3 font-medium"
+  },
+  "usage": {
+    "best_for": [
+      "Showcasing complex products with clear value propositions",
+      "Landing pages targeting enterprise clients",
+      "Websites requiring a professional and trustworthy aesthetic",
+      "Highlighting key features and benefits",
+      "Driving conversions through clear calls to action"
+    ],
+    "avoid_for": [
+      "Websites targeting a younger audience",
+      "Projects requiring a playful or informal tone",
+      "Designs needing a lot of visual clutter or animation",
+      "Applications prioritizing speed and performance over visual polish",
+      "Situations where accessibility is a primary concern (due to contrast)"
+    ]
+  },
+  "source": {
+    "arena_id": 41891472,
+    "arena_url": "https://www.are.na/block/41891472",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiI0MTg5MTQ3Mi9vcmlnaW5hbF80YmRkZTM4MGFhZjZlYjI4MGY2NGY1NWJlYTIxNDY3YS5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==?bc=0",
+    "title": "3350b3ce-c04c-4c28-9f36-9b5a8bca809c.jpg"
+  },
+  "extracted_at": "2025-12-19T07:28:23.735Z",
+  "extraction_version": "1.0.0"
+}

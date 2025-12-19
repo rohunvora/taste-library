@@ -1,0 +1,99 @@
+{
+  "id": "37750485",
+  "name": "Wallet Reveal Screen",
+  "description": "A mobile screen design featuring a wallet-inspired UI to reveal user-specific content or rewards.",
+  "screen_type": "mobile-screen",
+  "component_types": [
+    "card",
+    "button",
+    "data-display"
+  ],
+  "aesthetic_family": "flat-minimal",
+  "tags": [
+    "light-mode",
+    "mobile",
+    "fintech",
+    "onboarding"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "#F9F9F9",
+      "surface": "#FFFFFF",
+      "text_primary": "#000000",
+      "text_secondary": "#808080",
+      "accent": "#000000"
+    },
+    "radius": {
+      "containers": "20px",
+      "buttons": "9999px"
+    },
+    "shadows": {
+      "default": "0 2px 4px rgba(0,0,0,0.08)"
+    },
+    "spacing": {
+      "base_unit": "4px",
+      "container_padding": "24px",
+      "element_gap": "12px"
+    },
+    "typography": {
+      "heading_weight": "600",
+      "body_weight": "400",
+      "heading_size": "24px",
+      "body_size": "16px",
+      "line_height": "1.4",
+      "font_style": "geometric-sans"
+    }
+  },
+  "atoms": [
+    {
+      "type": "surface",
+      "name": "Rounded Container",
+      "description": "White container with rounded corners and subtle shadow.",
+      "css": "background-color: #FFFFFF; border-radius: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.08);"
+    },
+    {
+      "type": "button",
+      "name": "Pill Button",
+      "description": "A black button with pill-shaped rounded corners.",
+      "css": "background-color: #000000; color: #FFFFFF; border-radius: 9999px; padding: 12px 24px; font-weight: 500;"
+    },
+    {
+      "type": "typography",
+      "name": "Primary Heading",
+      "description": "Bold heading for titles and key information.",
+      "css": "font-size: 24px; font-weight: 600; color: #000000;"
+    },
+    {
+      "type": "typography",
+      "name": "Secondary Text",
+      "description": "Muted text for descriptions and less important information.",
+      "css": "font-size: 16px; color: #808080;"
+    }
+  ],
+  "code": {
+    "css": ".container { background-color: #FFFFFF; border-radius: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); padding: 24px; } .button { background-color: #000000; color: #FFFFFF; border-radius: 9999px; padding: 12px 24px; font-weight: 500; }",
+    "tailwind": "rounded-2xl shadow-md bg-white p-6 text-black font-medium"
+  },
+  "usage": {
+    "best_for": [
+      "Onboarding flows",
+      "Reward/achievement reveals",
+      "Personalized content delivery",
+      "Minimalist app interfaces"
+    ],
+    "avoid_for": [
+      "Data-heavy dashboards",
+      "Complex settings panels",
+      "UIs requiring strong visual hierarchy",
+      "Situations needing vibrant, attention-grabbing elements"
+    ]
+  },
+  "source": {
+    "arena_id": 37750485,
+    "arena_url": "https://www.are.na/block/37750485",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIzNzc1MDQ4NS9vcmlnaW5hbF82Y2ZlMGQ5YTQ0NDU1Mjc4N2YxNDg3NThmMTIxNzQ2Yi5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==?bc=0",
+    "title": "Home / X"
+  },
+  "extracted_at": "2025-12-19T07:26:11.180Z",
+  "extraction_version": "1.0.0"
+}

@@ -1,0 +1,102 @@
+{
+  "id": "36024485",
+  "name": "AI Stylist Pricing",
+  "description": "A mobile screen displaying subscription options for an AI stylist app, emphasizing a soft and inviting aesthetic.",
+  "screen_type": "mobile-screen",
+  "component_types": [
+    "pricing",
+    "card",
+    "button",
+    "list"
+  ],
+  "aesthetic_family": "soft-gradient",
+  "tags": [
+    "mobile",
+    "b2c",
+    "subscription",
+    "ai",
+    "light-mode"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "linear-gradient(to bottom, #E6F0FF, #FFF0F5)",
+      "surface": "#FFFFFF",
+      "text_primary": "#000000",
+      "text_secondary": "#666666",
+      "accent": "#000000"
+    },
+    "radius": {
+      "containers": "24px",
+      "buttons": "9999px"
+    },
+    "shadows": {
+      "default": "0 4px 16px rgba(0,0,0,0.04)"
+    },
+    "spacing": {
+      "base_unit": "8px",
+      "container_padding": "24px",
+      "element_gap": "16px"
+    },
+    "typography": {
+      "heading_weight": "600",
+      "body_weight": "400",
+      "heading_size": "20px",
+      "body_size": "14px",
+      "line_height": "1.5",
+      "font_style": "humanist-sans"
+    }
+  },
+  "atoms": [
+    {
+      "type": "surface",
+      "name": "Rounded Card",
+      "description": "White card with a large border radius and subtle shadow.",
+      "css": "background-color: #FFFFFF; border-radius: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.04);"
+    },
+    {
+      "type": "button",
+      "name": "Pill Button",
+      "description": "A black button with fully rounded edges.",
+      "css": "background-color: #000000; color: #FFFFFF; border-radius: 9999px; padding: 8px 20px; font-weight: 500;"
+    },
+    {
+      "type": "typography",
+      "name": "Primary Heading",
+      "description": "Dark, slightly bold heading text.",
+      "css": "color: #000000; font-weight: 600; font-size: 20px;"
+    },
+    {
+      "type": "spacing",
+      "name": "Vertical Gap",
+      "description": "Consistent vertical spacing between elements.",
+      "css": "margin-bottom: 16px;"
+    }
+  ],
+  "code": {
+    "css": ".container { background: linear-gradient(to bottom, #E6F0FF, #FFF0F5); padding: 20px; } .card { background-color: #FFFFFF; border-radius: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); padding: 24px; margin-bottom: 16px; } .button { background-color: #000000; color: #FFFFFF; border-radius: 9999px; padding: 8px 20px; font-weight: 500; }",
+    "tailwind": "bg-gradient-to-b from-blue-100 to-pink-50 p-5 rounded-3xl shadow-md"
+  },
+  "usage": {
+    "best_for": [
+      "Subscription pricing screens",
+      "Mobile app onboarding flows",
+      "AI-powered product promotions",
+      "Situations needing a friendly and approachable aesthetic"
+    ],
+    "avoid_for": [
+      "Data-heavy dashboards",
+      "Technical or enterprise applications",
+      "Situations requiring a serious or formal tone",
+      "Dark mode designs without modification",
+      "Brutalist or stark designs"
+    ]
+  },
+  "source": {
+    "arena_id": 36024485,
+    "arena_url": "https://www.are.na/block/36024485",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIzNjAyNDQ4NS9vcmlnaW5hbF83M2ExYzJjMTc4MzkxZDRkOGRhNGNmODJjYjExOGNhMi5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==?bc=0",
+    "title": "STUDIO MANNESKJA(@StudioManneskja) / X"
+  },
+  "extracted_at": "2025-12-19T07:24:30.853Z",
+  "extraction_version": "1.0.0"
+}

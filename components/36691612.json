@@ -1,0 +1,103 @@
+{
+  "id": "36691612",
+  "name": "Airbnb Itinerary View",
+  "description": "A mobile screen displaying a timeline itinerary of a booked experience, optimized for visual storytelling and ease of access to key information.",
+  "screen_type": "mobile-screen",
+  "component_types": [
+    "card",
+    "timeline",
+    "button",
+    "navigation"
+  ],
+  "aesthetic_family": "flat-minimal",
+  "tags": [
+    "light-mode",
+    "mobile",
+    "b2c",
+    "travel",
+    "itinerary"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "#FFFFFF",
+      "surface": "#F7F7F7",
+      "text_primary": "#000000",
+      "text_secondary": "#717171",
+      "accent": "#DD2A7B"
+    },
+    "radius": {
+      "containers": "12px",
+      "buttons": "8px"
+    },
+    "shadows": {
+      "default": "0 2px 4px rgba(0,0,0,0.04)"
+    },
+    "spacing": {
+      "base_unit": "8px",
+      "container_padding": "16px",
+      "element_gap": "8px"
+    },
+    "typography": {
+      "heading_weight": "600",
+      "body_weight": "400",
+      "heading_size": "20px",
+      "body_size": "14px",
+      "line_height": "1.4",
+      "font_style": "humanist-sans"
+    }
+  },
+  "atoms": [
+    {
+      "type": "card",
+      "name": "Rounded Card",
+      "description": "A card with rounded corners and subtle shadow, providing a clean and modern container for content.",
+      "css": "background-color: #F7F7F7; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); padding: 16px;"
+    },
+    {
+      "type": "button",
+      "name": "Light Button",
+      "description": "A light-colored button with rounded corners, suitable for secondary actions.",
+      "css": "background-color: #F7F7F7; border-radius: 8px; padding: 8px 16px; color: #000000; font-weight: 500; font-size: 14px; border: none; cursor: pointer;"
+    },
+    {
+      "type": "typography",
+      "name": "Secondary Text",
+      "description": "Muted text for less important information, providing visual hierarchy.",
+      "css": "color: #717171; font-size: 14px; line-height: 1.4;"
+    },
+    {
+      "type": "timeline",
+      "name": "Vertical Timeline",
+      "description": "A vertical line connecting events in chronological order, with a visual indicator for each event.",
+      "css": "border-left: 1px solid #E0E0E0; padding-left: 24px; position: relative;"
+    }
+  ],
+  "code": {
+    "css": ".container { background-color: #FFFFFF; padding: 16px; } .card { background-color: #F7F7F7; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); padding: 16px; margin-bottom: 8px; } .button { background-color: #F7F7F7; border-radius: 8px; padding: 8px 16px; color: #000000; font-weight: 500; font-size: 14px; border: none; cursor: pointer; }",
+    "tailwind": "bg-white p-4 rounded-xl shadow-md"
+  },
+  "usage": {
+    "best_for": [
+      "Displaying a sequence of events or activities",
+      "Presenting a travel itinerary",
+      "Highlighting key milestones or steps",
+      "Mobile-first experiences",
+      "Clean and minimal interfaces"
+    ],
+    "avoid_for": [
+      "Complex data visualization",
+      "Dense information displays",
+      "Designs requiring strong visual hierarchy through color",
+      "Scenarios needing tactile or skeuomorphic elements",
+      "When a dark or high-contrast theme is required"
+    ]
+  },
+  "source": {
+    "arena_id": 36691612,
+    "arena_url": "https://www.are.na/block/36691612",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIzNjY5MTYxMi9vcmlnaW5hbF81YmM5NGU2NWJhOGFiYWEwMDE4NDYyYzUwODE1ZDc1MC5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==?bc=0",
+    "title": "trips-tab-us.jpg?w=790"
+  },
+  "extracted_at": "2025-12-19T07:24:50.599Z",
+  "extraction_version": "1.0.0"
+}

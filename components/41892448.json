@@ -1,0 +1,106 @@
+{
+  "id": "41892448",
+  "name": "Joi Planner Screens",
+  "description": "Clean and visually appealing mobile app screens showcasing a daily planner, calendar, habit tracker, and widgets.",
+  "screen_type": "mobile-screen",
+  "component_types": [
+    "calendar",
+    "list",
+    "button",
+    "data-display",
+    "badge"
+  ],
+  "aesthetic_family": "soft-gradient",
+  "tags": [
+    "light-mode",
+    "mobile",
+    "b2c",
+    "productivity",
+    "health",
+    "calendar",
+    "habits"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "#FFFFFF",
+      "surface": "#FFFFFF",
+      "text_primary": "#000000",
+      "text_secondary": "#808080",
+      "accent": "#3399FF"
+    },
+    "radius": {
+      "containers": "20px",
+      "buttons": "9999px"
+    },
+    "shadows": {
+      "default": "0 4px 16px rgba(0,0,0,0.04)"
+    },
+    "spacing": {
+      "base_unit": "8px",
+      "container_padding": "16px",
+      "element_gap": "8px"
+    },
+    "typography": {
+      "heading_weight": "700",
+      "body_weight": "400",
+      "heading_size": "24px",
+      "body_size": "14px",
+      "line_height": "1.5",
+      "font_style": "geometric-sans"
+    }
+  },
+  "atoms": [
+    {
+      "type": "button",
+      "name": "Pill Button",
+      "description": "A rounded button with a subtle background and clear text.",
+      "css": "border-radius: 9999px; padding: 8px 16px; background-color: #E6F0FF; color: #000000; font-weight: 500; border: none;"
+    },
+    {
+      "type": "card",
+      "name": "Rounded Card",
+      "description": "A card with rounded corners and a subtle shadow.",
+      "css": "background-color: #FFFFFF; border-radius: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); padding: 16px;"
+    },
+    {
+      "type": "typography",
+      "name": "Section Heading",
+      "description": "A bold heading used to introduce sections.",
+      "css": "font-size: 18px; font-weight: 700; color: #000000;"
+    },
+    {
+      "type": "badge",
+      "name": "Floating Badge",
+      "description": "A floating badge with a background color and a number.",
+      "css": "position: relative; display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 6px; font-size: 12px; font-weight: 600; color: #FFFFFF; background-color: #FF6600; border-radius: 9999px;"
+    }
+  ],
+  "code": {
+    "css": ".container { background-color: #FFFFFF; padding: 20px; } .card { background-color: #FFFFFF; border-radius: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); padding: 16px; } .button { border-radius: 9999px; padding: 8px 16px; background-color: #E6F0FF; color: #000000; font-weight: 500; border: none; }",
+    "tailwind": "bg-white rounded-2xl shadow-md p-4 font-sans"
+  },
+  "usage": {
+    "best_for": [
+      "Mobile apps focused on productivity and organization",
+      "Apps with a clean and modern aesthetic",
+      "Dashboards and overview screens",
+      "Apps targeting a general audience",
+      "Apps that need to be visually appealing and easy to use"
+    ],
+    "avoid_for": [
+      "Apps with a technical or data-heavy focus",
+      "Apps requiring a dark or premium aesthetic",
+      "Apps targeting a niche audience with specific design preferences",
+      "Apps with a brutalist or unconventional design",
+      "Apps that need to display a lot of information in a compact space"
+    ]
+  },
+  "source": {
+    "arena_id": 41892448,
+    "arena_url": "https://www.are.na/block/41892448",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiI0MTg5MjQ0OC9vcmlnaW5hbF8wYTA5MjA1YjM2YTI5YzNkY2UwYzRlMTY1OGNkNmM5ZS5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==?bc=0",
+    "title": "17593369-b68f-4f52-978b-dadb1c163b90.jpg"
+  },
+  "extracted_at": "2025-12-19T07:28:56.193Z",
+  "extraction_version": "1.0.0"
+}

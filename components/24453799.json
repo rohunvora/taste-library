@@ -1,0 +1,99 @@
+{
+  "id": "24453799",
+  "name": "Infomercial Hero Section",
+  "description": "A hero section that uses the infomercial format to highlight a product's features, capabilities, and benefits by showing a problem and its solution.",
+  "screen_type": "landing-page",
+  "component_types": [
+    "hero",
+    "button",
+    "card"
+  ],
+  "aesthetic_family": "flat-minimal",
+  "tags": [
+    "b2b",
+    "saas",
+    "product-demo",
+    "light-mode"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "#FFFFFF",
+      "surface": "#E6E6FA",
+      "text_primary": "#000000",
+      "text_secondary": "#666666",
+      "accent": "#4169E1"
+    },
+    "radius": {
+      "containers": "0px",
+      "buttons": "8px"
+    },
+    "shadows": {
+      "default": "none"
+    },
+    "spacing": {
+      "base_unit": "8px",
+      "container_padding": "16px",
+      "element_gap": "8px"
+    },
+    "typography": {
+      "heading_weight": "700",
+      "body_weight": "400",
+      "heading_size": "32px",
+      "body_size": "16px",
+      "line_height": "1.5",
+      "font_style": "geometric-sans"
+    }
+  },
+  "atoms": [
+    {
+      "type": "typography",
+      "name": "Bold Heading",
+      "description": "A large, bold heading used for titles and main messages.",
+      "css": "font-size: 32px; font-weight: 700; line-height: 1.2;"
+    },
+    {
+      "type": "button",
+      "name": "Primary Button",
+      "description": "A rectangular button with rounded corners and a distinct background color for primary actions.",
+      "css": "background-color: #4169E1; color: white; border-radius: 8px; padding: 12px 24px; font-weight: 500;"
+    },
+    {
+      "type": "card",
+      "name": "Information Card",
+      "description": "A container with a light background color, used to group related information.",
+      "css": "background-color: #E6E6FA; padding: 16px; border-radius: 0px;"
+    },
+    {
+      "type": "spacing",
+      "name": "Vertical Rhythm",
+      "description": "Consistent vertical spacing using an 8px grid.",
+      "css": "margin-bottom: 8px;"
+    }
+  ],
+  "code": {
+    "css": ".hero-container { display: flex; flex-direction: column; align-items: center; padding: 20px; } .hero-heading { font-size: 32px; font-weight: 700; } .info-card { background-color: #E6E6FA; padding: 16px; } .primary-button { background-color: #4169E1; color: white; border-radius: 8px; padding: 12px 24px; }",
+    "tailwind": "<div className=\"flex flex-col items-center p-5\"> <h1 className=\"text-2xl font-bold\">Hero Heading</h1> <div className=\"bg-gray-100 p-4 rounded\">Info Card</div> <button className=\"bg-blue-500 text-white rounded px-6 py-2\">Button</button> </div>"
+  },
+  "usage": {
+    "best_for": [
+      "Landing pages showcasing a product's benefits.",
+      "Explaining complex solutions in a simple way.",
+      "Highlighting before-and-after scenarios.",
+      "Demonstrating a product's value proposition quickly."
+    ],
+    "avoid_for": [
+      "Situations requiring a sophisticated or high-end aesthetic.",
+      "Products with a purely emotional or aspirational appeal.",
+      "When the problem being solved is not easily visualized.",
+      "Designs requiring a dark or premium aesthetic."
+    ]
+  },
+  "source": {
+    "arena_id": 24453799,
+    "arena_url": "https://www.are.na/block/24453799",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIyNDQ1Mzc5OS9vcmlnaW5hbF9kZWRhNzM5NTVlOGJlYWYxNzRkNjQyNmFiMzc2YjdmMy5wbmciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==?bc=0",
+    "title": ""
+  },
+  "extracted_at": "2025-12-19T07:25:33.376Z",
+  "extraction_version": "1.0.0"
+}

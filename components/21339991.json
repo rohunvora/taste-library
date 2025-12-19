@@ -1,0 +1,105 @@
+{
+  "id": "21339991",
+  "name": "Sandstone Admin Panel",
+  "description": "A clean and organized admin panel layout with a warm, neutral color palette and rounded cards.",
+  "screen_type": "dashboard",
+  "component_types": [
+    "card",
+    "button",
+    "input",
+    "data-display",
+    "table",
+    "tabs"
+  ],
+  "aesthetic_family": "warm-organic",
+  "tags": [
+    "light-mode",
+    "desktop",
+    "b2b",
+    "admin",
+    "data-heavy"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "#F5F3F0",
+      "surface": "#FFFFFF",
+      "text_primary": "#2D2D2D",
+      "text_secondary": "#717171",
+      "accent": "#2E9AFF"
+    },
+    "radius": {
+      "containers": "12px",
+      "buttons": "8px"
+    },
+    "shadows": {
+      "default": "0 2px 8px rgba(0, 0, 0, 0.04)"
+    },
+    "spacing": {
+      "base_unit": "8px",
+      "container_padding": "16px",
+      "element_gap": "8px"
+    },
+    "typography": {
+      "heading_weight": "600",
+      "body_weight": "400",
+      "heading_size": "20px",
+      "body_size": "14px",
+      "line_height": "1.5",
+      "font_style": "humanist-sans"
+    }
+  },
+  "atoms": [
+    {
+      "type": "surface",
+      "name": "Rounded Card",
+      "description": "White container with rounded corners and subtle shadow.",
+      "css": "background-color: #FFFFFF; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); padding: 16px;"
+    },
+    {
+      "type": "button",
+      "name": "Primary Button",
+      "description": "Solid button with rounded corners and a subtle hover effect.",
+      "css": "background-color: #2D2D2D; color: #FFFFFF; border-radius: 8px; padding: 8px 16px; font-weight: 500; cursor: pointer; border: none; transition: background-color 0.2s ease;"
+    },
+    {
+      "type": "typography",
+      "name": "Section Heading",
+      "description": "Clear and concise heading for sections.",
+      "css": "font-size: 20px; font-weight: 600; color: #2D2D2D; margin-bottom: 8px;"
+    },
+    {
+      "type": "input",
+      "name": "Text Input",
+      "description": "Simple text input field with a light border.",
+      "css": "border: 1px solid #D1D5DB; border-radius: 6px; padding: 8px 12px; font-size: 14px; color: #2D2D2D;"
+    }
+  ],
+  "code": {
+    "css": ".container { background-color: #F5F3F0; padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; } .card { background-color: #FFFFFF; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); padding: 16px; }",
+    "tailwind": "bg-gray-100 p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 rounded-lg"
+  },
+  "usage": {
+    "best_for": [
+      "Data-rich dashboards",
+      "Internal tools and admin panels",
+      "Applications requiring a clean and organized layout",
+      "User interfaces with a focus on usability",
+      "Situations where a neutral and calming aesthetic is desired"
+    ],
+    "avoid_for": [
+      "Marketing websites requiring a high level of visual excitement",
+      "Applications targeting a younger audience that prefers bold colors",
+      "Designs needing a strong sense of depth or realism (neo-skeuomorphism)",
+      "Projects where a dark or high-contrast theme is necessary",
+      "UIs requiring complex animations or interactions"
+    ]
+  },
+  "source": {
+    "arena_id": 21339991,
+    "arena_url": "https://www.are.na/block/21339991",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIyMTMzOTk5MS9vcmlnaW5hbF84MTVlYzQxODNjMWU3ZmRmMGI1ZGE0NDMwZTRjOGNkYy5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==?bc=0",
+    "title": "coheremaincase-website-181.png?rect=0-0-5760-3600-w=1500-crop=1-q=70-fm=jpg-auto=format-fit=crop-h=938-dpr=2"
+  },
+  "extracted_at": "2025-12-19T07:27:39.730Z",
+  "extraction_version": "1.0.0"
+}

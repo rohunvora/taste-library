@@ -1,0 +1,102 @@
+{
+  "id": "30824434",
+  "name": "Dark Budget Overview",
+  "description": "A mobile screen displaying budget information with a dark theme, emphasizing spending overview and individual budget categories.",
+  "screen_type": "mobile-screen",
+  "component_types": [
+    "data-display",
+    "card",
+    "button",
+    "list"
+  ],
+  "aesthetic_family": "dark-premium",
+  "tags": [
+    "dark-mode",
+    "mobile",
+    "fintech",
+    "b2c"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "#000000",
+      "surface": "#121212",
+      "text_primary": "#FFFFFF",
+      "text_secondary": "#A0A0A0",
+      "accent": "#007AFF"
+    },
+    "radius": {
+      "containers": "12px",
+      "buttons": "8px"
+    },
+    "shadows": {
+      "default": "0 2px 4px rgba(0,0,0,0.2)"
+    },
+    "spacing": {
+      "base_unit": "8px",
+      "container_padding": "16px",
+      "element_gap": "8px"
+    },
+    "typography": {
+      "heading_weight": "600",
+      "body_weight": "400",
+      "heading_size": "20px",
+      "body_size": "14px",
+      "line_height": "1.4",
+      "font_style": "neo-grotesque"
+    }
+  },
+  "atoms": [
+    {
+      "type": "surface",
+      "name": "Dark Card",
+      "description": "Rounded card with a subtle shadow on a dark background.",
+      "css": "background-color: #121212; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"
+    },
+    {
+      "type": "typography",
+      "name": "Muted Text",
+      "description": "Secondary text color for labels and descriptions.",
+      "css": "color: #A0A0A0; font-size: 14px; font-weight: 400;"
+    },
+    {
+      "type": "button",
+      "name": "Rounded Button",
+      "description": "Small, rounded button with a light background and dark text.",
+      "css": "background-color: #2E2E2E; color: #FFFFFF; border-radius: 8px; padding: 6px 12px; font-size: 14px; font-weight: 500;"
+    },
+    {
+      "type": "data-display",
+      "name": "Spending Arc",
+      "description": "Circular arc displaying spending progress with a label and value.",
+      "css": "/* Requires custom SVG or canvas implementation */"
+    }
+  ],
+  "code": {
+    "css": ".budget-card { background-color: #121212; border-radius: 12px; padding: 16px; margin-bottom: 8px; } .budget-card-title { color: #FFFFFF; font-size: 16px; font-weight: 600; } .budget-card-subtitle { color: #A0A0A0; font-size: 14px; }",
+    "tailwind": "bg-gray-900 rounded-lg p-4 mb-2 text-white"
+  },
+  "usage": {
+    "best_for": [
+      "Mobile finance apps",
+      "Budget tracking dashboards",
+      "Dark mode interfaces",
+      "Personal expense management",
+      "Subscription tracking"
+    ],
+    "avoid_for": [
+      "Data-dense dashboards requiring high information density",
+      "Light-themed applications",
+      "Applications requiring complex data visualization",
+      "Marketing landing pages",
+      "Applications with a playful or colorful aesthetic"
+    ]
+  },
+  "source": {
+    "arena_id": 30824434,
+    "arena_url": "https://www.are.na/block/30824434",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIzMDgyNDQzNC9vcmlnaW5hbF9kNzQ3ZjUwMDYyMWNjYzJjMDQ0ZDY1NzA2NGY3NDQ1Yy5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==?bc=0",
+    "title": "68a4120f14c2c5f64ea30a9cc58efcf7.jpg"
+  },
+  "extracted_at": "2025-12-19T07:24:40.448Z",
+  "extraction_version": "1.0.0"
+}

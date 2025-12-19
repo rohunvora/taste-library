@@ -1,0 +1,100 @@
+{
+  "id": "40249979",
+  "name": "Pokemon Stat Screen",
+  "description": "A mobile screen displaying detailed stats for a Pokemon character, optimized for readability and engagement.",
+  "screen_type": "mobile-screen",
+  "component_types": [
+    "card",
+    "data-display",
+    "list",
+    "badge"
+  ],
+  "aesthetic_family": "soft-gradient",
+  "tags": [
+    "mobile",
+    "light-mode",
+    "gaming",
+    "b2c"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "#FFFDF7",
+      "surface": "#FFFFFF",
+      "text_primary": "#212121",
+      "text_secondary": "#757575",
+      "accent": "#FF6F00"
+    },
+    "radius": {
+      "containers": "24px",
+      "buttons": "8px"
+    },
+    "shadows": {
+      "default": "0 2px 8px rgba(0,0,0,0.08)"
+    },
+    "spacing": {
+      "base_unit": "8px",
+      "container_padding": "16px",
+      "element_gap": "8px"
+    },
+    "typography": {
+      "heading_weight": "600",
+      "body_weight": "400",
+      "heading_size": "20px",
+      "body_size": "14px",
+      "line_height": "1.4",
+      "font_style": "humanist-sans"
+    }
+  },
+  "atoms": [
+    {
+      "type": "surface",
+      "name": "Rounded Card",
+      "description": "White card with rounded corners and subtle shadow for content grouping.",
+      "css": "background-color: #FFFFFF; border-radius: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 16px;"
+    },
+    {
+      "type": "typography",
+      "name": "Section Header",
+      "description": "Bold header for section titles.",
+      "css": "font-size: 20px; font-weight: 600; color: #212121;"
+    },
+    {
+      "type": "data-display",
+      "name": "Stat Badge",
+      "description": "Circular badge displaying a stat value.",
+      "css": "border-radius: 50%; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center; color: white; font-weight: bold;"
+    },
+    {
+      "type": "spacing",
+      "name": "Vertical Rhythm",
+      "description": "Consistent vertical spacing using an 8px grid.",
+      "css": "margin-bottom: 8px;"
+    }
+  ],
+  "code": {
+    "css": ".card { background-color: #FFFFFF; border-radius: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 16px; } .section-header { font-size: 20px; font-weight: 600; color: #212121; margin-bottom: 8px; }",
+    "tailwind": "rounded-2xl shadow-md bg-white p-4 font-sans"
+  },
+  "usage": {
+    "best_for": [
+      "Displaying detailed statistics",
+      "Mobile gaming interfaces",
+      "Character profile screens",
+      "Data-rich content presentation"
+    ],
+    "avoid_for": [
+      "Minimalist designs",
+      "Dashboards with many charts",
+      "Marketing landing pages",
+      "Authentication flows"
+    ]
+  },
+  "source": {
+    "arena_id": 40249979,
+    "arena_url": "https://www.are.na/block/40249979",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiI0MDI0OTk3OS9vcmlnaW5hbF84OGE4MjlmNDIyYjNmMWM5MTYxODY4YWZjNmZmZWE0Zi5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==?bc=0",
+    "title": "@duncandesi9n"
+  },
+  "extracted_at": "2025-12-19T07:29:16.039Z",
+  "extraction_version": "1.0.0"
+}

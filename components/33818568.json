@@ -1,0 +1,102 @@
+{
+  "id": "33818568",
+  "name": "Whimsical Navigation Screen",
+  "description": "A playful mobile navigation screen with a focus on visual cues and a light, airy aesthetic.",
+  "screen_type": "mobile-screen",
+  "component_types": [
+    "navigation",
+    "button",
+    "data-display",
+    "avatar"
+  ],
+  "aesthetic_family": "playful-colorful",
+  "tags": [
+    "mobile",
+    "b2c",
+    "maps",
+    "light-mode"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "#FFFFFF",
+      "surface": "#FFFFFF",
+      "text_primary": "#000000",
+      "text_secondary": "#808080",
+      "accent": "#FF7700"
+    },
+    "radius": {
+      "containers": "24px",
+      "buttons": "9999px"
+    },
+    "shadows": {
+      "default": "0 4px 8px rgba(0,0,0,0.08)"
+    },
+    "spacing": {
+      "base_unit": "8px",
+      "container_padding": "16px",
+      "element_gap": "8px"
+    },
+    "typography": {
+      "heading_weight": "700",
+      "body_weight": "400",
+      "heading_size": "24px",
+      "body_size": "14px",
+      "line_height": "1.4",
+      "font_style": "humanist-sans"
+    }
+  },
+  "atoms": [
+    {
+      "type": "button",
+      "name": "Pill Button",
+      "description": "A rounded button with a gradient background, used for primary actions.",
+      "css": "background: linear-gradient(to right, #FF9933, #FF6600); border-radius: 9999px; color: white; padding: 8px 24px; font-weight: 600; border: none;"
+    },
+    {
+      "type": "typography",
+      "name": "Bold Heading",
+      "description": "A large, bold heading used for primary information.",
+      "css": "font-size: 24px; font-weight: 700; color: #0000FF;"
+    },
+    {
+      "type": "avatar",
+      "name": "Circular Avatar",
+      "description": "A simple circular avatar with initials.",
+      "css": "width: 32px; height: 32px; border-radius: 50%; background-color: #E0E0E0; display: flex; justify-content: center; align-items: center; color: #666666; font-size: 12px;"
+    },
+    {
+      "type": "surface",
+      "name": "Rounded Container",
+      "description": "A container with rounded corners and a subtle shadow.",
+      "css": "background-color: #FFFFFF; border-radius: 24px; box-shadow: 0 4px 8px rgba(0,0,0,0.08); padding: 16px;"
+    }
+  ],
+  "code": {
+    "css": ".container { background-color: #FFFFFF; border-radius: 24px; box-shadow: 0 4px 8px rgba(0,0,0,0.08); padding: 16px; } .pill-button { background: linear-gradient(to right, #FF9933, #FF6600); border-radius: 9999px; color: white; padding: 8px 24px; font-weight: 600; border: none; }",
+    "tailwind": "Not applicable due to unique visual elements."
+  },
+  "usage": {
+    "best_for": [
+      "Mobile navigation apps",
+      "Location-based services",
+      "Apps targeting younger audiences",
+      "UIs that prioritize visual appeal",
+      "Simple task-oriented applications"
+    ],
+    "avoid_for": [
+      "Data-heavy dashboards",
+      "B2B enterprise software",
+      "Applications requiring high precision",
+      "UIs that need to convey seriousness or authority",
+      "Situations where accessibility is paramount (due to color choices)"
+    ]
+  },
+  "source": {
+    "arena_id": 33818568,
+    "arena_url": "https://www.are.na/block/33818568",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIzMzgxODU2OC9vcmlnaW5hbF83NzgyMDRjZDNlMDNmODZlZWVmNTZlYWRmZTBiMGYzYy5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==?bc=0",
+    "title": "telegram-cloud-photo-size-2-5467753836555923040-y.jpg"
+  },
+  "extracted_at": "2025-12-19T07:26:40.475Z",
+  "extraction_version": "1.0.0"
+}

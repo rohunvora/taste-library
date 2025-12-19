@@ -1,0 +1,104 @@
+{
+  "id": "38004705",
+  "name": "Flora Care Dashboard",
+  "description": "A clean and intuitive mobile dashboard for managing plant care, featuring a light theme and circular image containers.",
+  "screen_type": "mobile-screen",
+  "component_types": [
+    "dashboard",
+    "navigation",
+    "button",
+    "data-display",
+    "list"
+  ],
+  "aesthetic_family": "flat-minimal",
+  "tags": [
+    "light-mode",
+    "mobile",
+    "b2c",
+    "health",
+    "plant-care"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "#FFFFFF",
+      "surface": "#FFFFFF",
+      "text_primary": "#000000",
+      "text_secondary": "#808080",
+      "accent": "#2E9AFF"
+    },
+    "radius": {
+      "containers": "0px",
+      "buttons": "9999px"
+    },
+    "shadows": {
+      "default": "none"
+    },
+    "spacing": {
+      "base_unit": "8px",
+      "container_padding": "16px",
+      "element_gap": "12px"
+    },
+    "typography": {
+      "heading_weight": "600",
+      "body_weight": "400",
+      "heading_size": "24px",
+      "body_size": "14px",
+      "line_height": "1.4",
+      "font_style": "geometric-sans"
+    }
+  },
+  "atoms": [
+    {
+      "type": "button",
+      "name": "Pill Button",
+      "description": "Small, rounded button for quick actions.",
+      "css": "padding: 4px 12px; border-radius: 9999px; background-color: #E0E0E0; color: #000000; font-size: 12px; font-weight: 500; border: none; cursor: pointer;"
+    },
+    {
+      "type": "typography",
+      "name": "Section Heading",
+      "description": "Clear and concise heading for sections.",
+      "css": "font-size: 18px; font-weight: 600; color: #000000; margin-bottom: 8px;"
+    },
+    {
+      "type": "navigation",
+      "name": "Bottom Navigation Bar",
+      "description": "Simple bottom navigation bar with icons.",
+      "css": "display: flex; justify-content: space-around; align-items: center; padding: 16px; background-color: #FFFFFF; border-top: 1px solid #E0E0E0;"
+    },
+    {
+      "type": "surface",
+      "name": "Circular Image Container",
+      "description": "Container for images with a circular crop.",
+      "css": "width: 80px; height: 80px; border-radius: 50%; overflow: hidden; display: flex; justify-content: center; align-items: center;"
+    }
+  ],
+  "code": {
+    "css": "body { font-family: sans-serif; background-color: #FFFFFF; color: #000000; }\n.container { padding: 16px; }\n.bottom-nav { display: flex; justify-content: space-around; align-items: center; padding: 16px; background-color: #FFFFFF; border-top: 1px solid #E0E0E0; }",
+    "tailwind": "bg-white text-black font-sans container py-4"
+  },
+  "usage": {
+    "best_for": [
+      "Mobile dashboards",
+      "Simple task management apps",
+      "Apps requiring a clean and minimal aesthetic",
+      "Plant care or pet care applications",
+      "Applications focused on visual clarity"
+    ],
+    "avoid_for": [
+      "Data-heavy dashboards requiring complex visualizations",
+      "Applications needing a dark or premium aesthetic",
+      "Apps with complex navigation structures",
+      "UIs that require tactile or skeuomorphic elements",
+      "Applications targeting a technical audience"
+    ]
+  },
+  "source": {
+    "arena_id": 38004705,
+    "arena_url": "https://www.are.na/block/38004705",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIzODAwNDcwNS9vcmlnaW5hbF8wMjNjNTUwYWRjZmQ5NmIxY2VlMjM4MjhkZGY1MTIyYS5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==?bc=0",
+    "title": "image-from-x-2-.jpeg"
+  },
+  "extracted_at": "2025-12-19T07:26:01.178Z",
+  "extraction_version": "1.0.0"
+}

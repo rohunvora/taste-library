@@ -1,0 +1,101 @@
+{
+  "id": "30326654",
+  "name": "Minimalist Habit Tracker",
+  "description": "A clean and simple habit tracker interface focused on daily repetition and progress visualization.",
+  "screen_type": "mobile-screen",
+  "component_types": [
+    "data-display",
+    "card",
+    "avatar",
+    "metric",
+    "timeline"
+  ],
+  "aesthetic_family": "flat-minimal",
+  "tags": [
+    "light-mode",
+    "mobile",
+    "health",
+    "productivity"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "#F7F7F7",
+      "surface": "#FFFFFF",
+      "text_primary": "#212121",
+      "text_secondary": "#757575",
+      "accent": "#C4A4F2"
+    },
+    "radius": {
+      "containers": "16px",
+      "buttons": "24px"
+    },
+    "shadows": {
+      "default": "0 2px 4px rgba(0, 0, 0, 0.04)"
+    },
+    "spacing": {
+      "base_unit": "8px",
+      "container_padding": "16px",
+      "element_gap": "8px"
+    },
+    "typography": {
+      "heading_weight": "600",
+      "body_weight": "400",
+      "heading_size": "20px",
+      "body_size": "14px",
+      "line_height": "1.5",
+      "font_style": "humanist-sans"
+    }
+  },
+  "atoms": [
+    {
+      "type": "surface",
+      "name": "Rounded Card",
+      "description": "White surface with rounded corners and subtle shadow.",
+      "css": "background-color: #FFFFFF; border-radius: 16px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);"
+    },
+    {
+      "type": "typography",
+      "name": "Primary Heading",
+      "description": "Dark, slightly bold heading for titles and important information.",
+      "css": "font-size: 20px; font-weight: 600; color: #212121; line-height: 1.3;"
+    },
+    {
+      "type": "color",
+      "name": "Accent Color",
+      "description": "Purple accent color used for interactive elements and highlights.",
+      "css": "color: #C4A4F2;"
+    },
+    {
+      "type": "data-display",
+      "name": "Day Grid",
+      "description": "A grid of squares representing days of the week, colored to indicate habit completion.",
+      "css": "display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; width: 100%;"
+    }
+  ],
+  "code": {
+    "css": ".container { background-color: #F7F7F7; padding: 16px; font-family: sans-serif; } .card { background-color: #FFFFFF; border-radius: 16px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04); padding: 16px; margin-bottom: 8px; } .heading { font-size: 20px; font-weight: 600; color: #212121; line-height: 1.3; } .text-secondary { color: #757575; } .accent { color: #C4A4F2; }",
+    "tailwind": "bg-gray-100 p-4 font-sans rounded-xl shadow-md text-gray-800"
+  },
+  "usage": {
+    "best_for": [
+      "Habit tracking applications",
+      "Daily goal setting interfaces",
+      "Progress visualization dashboards",
+      "Minimalist productivity tools"
+    ],
+    "avoid_for": [
+      "Complex data analysis tools",
+      "Visually rich marketing websites",
+      "Applications requiring high information density",
+      "Designs needing strong visual hierarchy"
+    ]
+  },
+  "source": {
+    "arena_id": 30326654,
+    "arena_url": "https://www.are.na/block/30326654",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIzMDMyNjY1NC9vcmlnaW5hbF81MDY0YjVmZDcxMWNiYTVlMTUzYTZmNjM0MjU2MTJjMi5wbmciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==?bc=0",
+    "title": "screenshot-2024-08-30-at-15.40.28.png"
+  },
+  "extracted_at": "2025-12-19T07:26:21.563Z",
+  "extraction_version": "1.0.0"
+}
