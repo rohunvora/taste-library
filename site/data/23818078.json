@@ -1,0 +1,98 @@
+{
+  "id": "23818078",
+  "name": "Homepage Purpose Diagram",
+  "description": "A diagram outlining the purpose of a homepage, illustrating different strategic approaches and their implications regarding product inclusion.",
+  "screen_type": "other",
+  "component_types": [],
+  "aesthetic_family": "flat-minimal",
+  "tags": [
+    "diagram",
+    "flowchart",
+    "strategy",
+    "homepage",
+    "decision-tree"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "#f2f2f2",
+      "surface": "#FFFFFF",
+      "text_primary": "#000000",
+      "text_secondary": "#666666",
+      "accent": "#007bff"
+    },
+    "radius": {
+      "containers": "0px",
+      "buttons": "0px"
+    },
+    "shadows": {
+      "default": "none"
+    },
+    "spacing": {
+      "base_unit": "8px",
+      "container_padding": "16px",
+      "element_gap": "8px"
+    },
+    "typography": {
+      "heading_weight": "600",
+      "body_weight": "400",
+      "heading_size": "20px",
+      "body_size": "14px",
+      "line_height": "1.5",
+      "font_style": "sans-serif"
+    }
+  },
+  "atoms": [
+    {
+      "type": "typography",
+      "name": "Diagram Heading",
+      "description": "The main heading style for the diagram nodes.",
+      "css": "font-size: 16px; font-weight: 600; color: #000000;"
+    },
+    {
+      "type": "typography",
+      "name": "Diagram Label",
+      "description": "The style for labels indicating product inclusion.",
+      "css": "font-size: 12px; font-weight: 400; color: #ff0000;"
+    },
+    {
+      "type": "icon",
+      "name": "Checkmark Icon",
+      "description": "A green checkmark icon to indicate a selected option.",
+      "css": "color: #28a745; font-size: 16px;"
+    },
+    {
+      "type": "spacing",
+      "name": "Diagram Node Spacing",
+      "description": "Spacing between nodes in the diagram.",
+      "css": "margin: 8px;"
+    }
+  ],
+  "code": {
+    "css": ".diagram-container { background-color: #f2f2f2; padding: 20px; } .diagram-node { border: 1px solid #ccc; padding: 10px; }",
+    "tailwind": "bg-gray-100 p-5 border border-gray-300"
+  },
+  "usage": {
+    "best_for": [
+      "Visualizing strategic options",
+      "Illustrating decision trees",
+      "Explaining complex relationships",
+      "Presenting information in a structured way",
+      "Documenting design decisions"
+    ],
+    "avoid_for": [
+      "Displaying large amounts of data",
+      "When interactivity is required",
+      "Situations requiring high visual appeal",
+      "When a linear narrative is needed",
+      "Replacing detailed documentation"
+    ]
+  },
+  "source": {
+    "arena_id": 23818078,
+    "arena_url": "https://www.are.na/block/23818078",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIyMzgxODA3OC9vcmlnaW5hbF80NzRkZGViYTI2NjM1YjNlY2VmMzViMDQwNWUzMTI1ZC5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==?bc=0",
+    "title": "1695651984398?e=1698278400-v=beta-t=ktuewhrjibob9b26h6zzqwxrllrmajny5pgbxpjqnj8"
+  },
+  "extracted_at": "2025-12-19T07:25:41.727Z",
+  "extraction_version": "1.0.0"
+}

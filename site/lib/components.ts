@@ -82,8 +82,8 @@ export interface ComponentIndex {
   components: string[];
 }
 
-// Path to components directory (relative to project root)
-const COMPONENTS_DIR = path.join(process.cwd(), '..', 'components');
+// Path to components directory (inside site)
+const COMPONENTS_DIR = path.join(process.cwd(), 'data');
 
 /**
  * Load the component index

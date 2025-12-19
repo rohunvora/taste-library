@@ -1,0 +1,102 @@
+{
+  "id": "18479306",
+  "name": "Solar Energy Snapshot",
+  "description": "A mobile-first dashboard providing a quick overview of key energy metrics and news.",
+  "screen_type": "mobile-screen",
+  "component_types": [
+    "data-display",
+    "metric",
+    "chart"
+  ],
+  "aesthetic_family": "flat-minimal",
+  "tags": [
+    "light-mode",
+    "mobile",
+    "b2b",
+    "energy",
+    "dashboard"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "#F5F5DC",
+      "surface": "#FFFFFF",
+      "text_primary": "#000000",
+      "text_secondary": "#808080",
+      "accent": "#FFA500"
+    },
+    "radius": {
+      "containers": "20px",
+      "buttons": "8px"
+    },
+    "shadows": {
+      "default": "0 2px 4px rgba(0,0,0,0.04)"
+    },
+    "spacing": {
+      "base_unit": "4px",
+      "container_padding": "16px",
+      "element_gap": "8px"
+    },
+    "typography": {
+      "heading_weight": "600",
+      "body_weight": "400",
+      "heading_size": "20px",
+      "body_size": "14px",
+      "line_height": "1.4",
+      "font_style": "geometric-sans"
+    }
+  },
+  "atoms": [
+    {
+      "type": "surface",
+      "name": "Rounded White Card",
+      "description": "White container with rounded corners and subtle shadow.",
+      "css": "background-color: #FFFFFF; border-radius: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); padding: 16px;"
+    },
+    {
+      "type": "typography",
+      "name": "Metric Title",
+      "description": "Bold title for key metrics.",
+      "css": "font-size: 20px; font-weight: 600; color: #000000;"
+    },
+    {
+      "type": "color",
+      "name": "Accent Color",
+      "description": "Orange used for highlights and key data points.",
+      "css": "color: #FFA500;"
+    },
+    {
+      "type": "spacing",
+      "name": "Small Element Gap",
+      "description": "8px spacing between elements for clean layout.",
+      "css": "margin-bottom: 8px;"
+    }
+  ],
+  "code": {
+    "css": ".container { background-color: #F5F5DC; padding: 16px; } .card { background-color: #FFFFFF; border-radius: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); padding: 16px; } .metric-title { font-size: 20px; font-weight: 600; color: #000000; }",
+    "tailwind": "bg-parchment p-4 space-y-2 rounded-xl shadow-sm"
+  },
+  "usage": {
+    "best_for": [
+      "Mobile dashboards",
+      "Quick data snapshots",
+      "Energy sector applications",
+      "Simple metric tracking",
+      "Progress reporting"
+    ],
+    "avoid_for": [
+      "Complex data visualizations",
+      "Highly interactive interfaces",
+      "Dark mode designs",
+      "Applications requiring a premium aesthetic",
+      "Dense data tables"
+    ]
+  },
+  "source": {
+    "arena_id": 18479306,
+    "arena_url": "https://www.are.na/block/18479306",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIxODQ3OTMwNi9vcmlnaW5hbF9hZTdmZWI0YTA1NmIyYmJlYjQxOWY5YThhMTNiMDNiMC5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==?bc=0",
+    "title": "weekly graphs mobile app screen charts"
+  },
+  "extracted_at": "2025-12-19T07:27:07.629Z",
+  "extraction_version": "1.0.0"
+}

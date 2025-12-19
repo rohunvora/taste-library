@@ -1,0 +1,100 @@
+{
+  "id": "19228574",
+  "name": "Vibrant Data Overview",
+  "description": "A mobile dashboard providing a high-level overview of key metrics using visually distinct cards.",
+  "screen_type": "mobile-screen",
+  "component_types": [
+    "data-display",
+    "card",
+    "metric"
+  ],
+  "aesthetic_family": "playful-colorful",
+  "tags": [
+    "mobile",
+    "dashboard",
+    "data-visualization"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "#FFFFFF",
+      "surface": "#FFFFFF",
+      "text_primary": "#000000",
+      "text_secondary": "#666666",
+      "accent": "#007AFF"
+    },
+    "radius": {
+      "containers": "20px",
+      "buttons": "12px"
+    },
+    "shadows": {
+      "default": "0 2px 4px rgba(0,0,0,0.04)"
+    },
+    "spacing": {
+      "base_unit": "8px",
+      "container_padding": "16px",
+      "element_gap": "8px"
+    },
+    "typography": {
+      "heading_weight": "600",
+      "body_weight": "400",
+      "heading_size": "24px",
+      "body_size": "14px",
+      "line_height": "1.4",
+      "font_style": "geometric-sans"
+    }
+  },
+  "atoms": [
+    {
+      "type": "card",
+      "name": "Rounded Data Card",
+      "description": "A rounded card with a distinct background color for visual separation of data.",
+      "css": "background-color: #F0F0F0; border-radius: 20px; padding: 16px; margin-bottom: 8px;"
+    },
+    {
+      "type": "typography",
+      "name": "Metric Title",
+      "description": "A bold title used to highlight key metrics.",
+      "css": "font-size: 24px; font-weight: 600; color: #000000;"
+    },
+    {
+      "type": "typography",
+      "name": "Label Text",
+      "description": "Smaller, muted text used for labels and descriptions.",
+      "css": "font-size: 14px; color: #666666;"
+    },
+    {
+      "type": "color",
+      "name": "Pastel Background",
+      "description": "Soft pastel background colors to differentiate data cards.",
+      "css": "background-color: rgba(255, 0, 0, 0.2);"
+    }
+  ],
+  "code": {
+    "css": ".data-card { background-color: #FFFFFF; border-radius: 20px; padding: 16px; margin-bottom: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }\n.metric-title { font-size: 24px; font-weight: 600; color: #000000; }\n.label-text { font-size: 14px; color: #666666; }",
+    "tailwind": "rounded-2xl bg-white p-4 mb-2 shadow-sm text-gray-600"
+  },
+  "usage": {
+    "best_for": [
+      "Mobile dashboards",
+      "High-level data summaries",
+      "Visually distinct data categories",
+      "Applications needing a clean and modern look",
+      "Quick data consumption"
+    ],
+    "avoid_for": [
+      "Data-dense interfaces",
+      "Complex data relationships",
+      "Situations requiring precise data comparison",
+      "Applications needing a serious or corporate aesthetic",
+      "When accessibility requires higher contrast"
+    ]
+  },
+  "source": {
+    "arena_id": 19228574,
+    "arena_url": "https://www.are.na/block/19228574",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIxOTIyODU3NC9vcmlnaW5hbF8zYzZkMmJkYTllYmUxNjlkOTNhNWNiYTg1MTBhYWRiMS5wbmciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==?bc=0",
+    "title": "image.png"
+  },
+  "extracted_at": "2025-12-19T07:28:13.361Z",
+  "extraction_version": "1.0.0"
+}

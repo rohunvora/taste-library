@@ -1,0 +1,100 @@
+{
+  "id": "23645590",
+  "name": "Status Indicator Cards",
+  "description": "Simple cards to display status with a title, message, and corresponding icon.",
+  "screen_type": "other",
+  "component_types": [
+    "card",
+    "data-display"
+  ],
+  "aesthetic_family": "flat-minimal",
+  "tags": [
+    "status",
+    "indicator",
+    "feedback",
+    "light-mode"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "#FFFFFF",
+      "surface": "#FFFFFF",
+      "text_primary": "#000000",
+      "text_secondary": "#6B7280",
+      "accent": "#3B82F6"
+    },
+    "radius": {
+      "containers": "16px",
+      "buttons": "8px"
+    },
+    "shadows": {
+      "default": "0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06)"
+    },
+    "spacing": {
+      "base_unit": "4px",
+      "container_padding": "16px",
+      "element_gap": "8px"
+    },
+    "typography": {
+      "heading_weight": "600",
+      "body_weight": "400",
+      "heading_size": "16px",
+      "body_size": "14px",
+      "line_height": "1.5",
+      "font_style": "humanist-sans"
+    }
+  },
+  "atoms": [
+    {
+      "type": "card",
+      "name": "Status Card",
+      "description": "Card with rounded corners and subtle shadow.",
+      "css": "background-color: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06); padding: 16px;"
+    },
+    {
+      "type": "typography",
+      "name": "Status Title",
+      "description": "Bold title for the status.",
+      "css": "font-size: 16px; font-weight: 600; color: #000000;"
+    },
+    {
+      "type": "typography",
+      "name": "Status Message",
+      "description": "Smaller, muted message for additional context.",
+      "css": "font-size: 14px; color: #6B7280;"
+    },
+    {
+      "type": "icon",
+      "name": "Pixelated Icon",
+      "description": "A simple pixelated icon representing the status.",
+      "css": "width: 32px; height: 32px; display: inline-block; margin-right: 8px; vertical-align: middle;"
+    }
+  ],
+  "code": {
+    "css": ".status-card { background-color: #FFFFFF; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06); padding: 16px; display: flex; flex-direction: column; gap: 8px; }\n.status-title { font-size: 16px; font-weight: 600; color: #000000; }\n.status-message { font-size: 14px; color: #6B7280; }\n.status-icon { width: 32px; height: 32px; display: inline-block; margin-right: 8px; vertical-align: middle; }",
+    "tailwind": "<div class=\"bg-white rounded-xl shadow p-4 flex flex-col gap-2\">\n  <div class=\"font-semibold text-base text-gray-900\">Title</div>\n  <div class=\"text-sm text-gray-500\">Message</div>\n</div>"
+  },
+  "usage": {
+    "best_for": [
+      "Displaying simple status updates",
+      "Providing user feedback",
+      "Highlighting important information",
+      "Integrating into dashboards",
+      "Mobile interfaces"
+    ],
+    "avoid_for": [
+      "Complex data visualization",
+      "Situations requiring detailed explanations",
+      "High-density information displays",
+      "Critical error reporting (use more prominent alerts)",
+      "Marketing hero sections"
+    ]
+  },
+  "source": {
+    "arena_id": 23645590,
+    "arena_url": "https://www.are.na/block/23645590",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIyMzY0NTU5MC9vcmlnaW5hbF9iMTE3MTE4ZGRiMmMyOTdjN2E2ZDQ1Y2QyZjcxNmU0Mi5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==?bc=0",
+    "title": "f568rj4xuaa0aim?format=jpg-name=medium"
+  },
+  "extracted_at": "2025-12-19T07:28:01.292Z",
+  "extraction_version": "1.0.0"
+}

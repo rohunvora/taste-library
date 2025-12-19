@@ -1,0 +1,101 @@
+{
+  "id": "14501339",
+  "name": "Crypto Wallet Balance",
+  "description": "A mobile screen displaying a user's crypto wallet balance and transaction history.",
+  "screen_type": "mobile-screen",
+  "component_types": [
+    "data-display",
+    "button",
+    "list"
+  ],
+  "aesthetic_family": "dark-premium",
+  "tags": [
+    "dark-mode",
+    "mobile",
+    "fintech",
+    "crypto"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "#121212",
+      "surface": "#1E1E1E",
+      "text_primary": "#FFFFFF",
+      "text_secondary": "#A0A0A0",
+      "accent": "#6750A4"
+    },
+    "radius": {
+      "containers": "12px",
+      "buttons": "9999px"
+    },
+    "shadows": {
+      "default": "0 2px 4px rgba(0,0,0,0.2)"
+    },
+    "spacing": {
+      "base_unit": "8px",
+      "container_padding": "16px",
+      "element_gap": "8px"
+    },
+    "typography": {
+      "heading_weight": "600",
+      "body_weight": "400",
+      "heading_size": "24px",
+      "body_size": "14px",
+      "line_height": "1.4",
+      "font_style": "geometric-sans"
+    }
+  },
+  "atoms": [
+    {
+      "type": "surface",
+      "name": "Dark Card",
+      "description": "Dark background card with rounded corners.",
+      "css": "background-color: #1E1E1E; border-radius: 12px;"
+    },
+    {
+      "type": "button",
+      "name": "Rounded Button",
+      "description": "Purple rounded button for primary actions.",
+      "css": "background-color: #6750A4; color: #FFFFFF; border-radius: 9999px; padding: 8px 16px;"
+    },
+    {
+      "type": "typography",
+      "name": "Primary Text",
+      "description": "White text for main content.",
+      "css": "color: #FFFFFF; font-weight: 400;"
+    },
+    {
+      "type": "typography",
+      "name": "Secondary Text",
+      "description": "Gray text for muted content.",
+      "css": "color: #A0A0A0; font-weight: 400;"
+    }
+  ],
+  "code": {
+    "css": ".container { background-color: #121212; padding: 16px; } .card { background-color: #1E1E1E; border-radius: 12px; padding: 16px; margin-bottom: 8px; } .button { background-color: #6750A4; color: #FFFFFF; border-radius: 9999px; padding: 8px 16px; }",
+    "tailwind": "bg-gray-900 rounded-xl text-white"
+  },
+  "usage": {
+    "best_for": [
+      "Displaying financial data",
+      "Crypto wallet applications",
+      "Mobile-first dashboards",
+      "Dark mode interfaces",
+      "Transaction history"
+    ],
+    "avoid_for": [
+      "Content-heavy marketing sites",
+      "Light-themed applications",
+      "Data tables with many columns",
+      "Applications requiring high information density",
+      "Situations where accessibility is paramount and contrast needs to be carefully managed"
+    ]
+  },
+  "source": {
+    "arena_id": 14501339,
+    "arena_url": "https://www.are.na/block/14501339",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIxNDUwMTMzOS9vcmlnaW5hbF9lYjRkMmRhM2Y4ODMzOTk4MmY1YTcxOTJkOGE2NTJmYS5wbmciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==?bc=0",
+    "title": ""
+  },
+  "extracted_at": "2025-12-19T07:26:30.725Z",
+  "extraction_version": "1.0.0"
+}

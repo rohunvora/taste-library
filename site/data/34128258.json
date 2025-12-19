@@ -1,0 +1,99 @@
+{
+  "id": "34128258",
+  "name": "Crisp Mobile Home",
+  "description": "A clean and modern mobile home screen with a focus on visual cards and clear calls to action.",
+  "screen_type": "mobile-screen",
+  "component_types": [
+    "card",
+    "button",
+    "list",
+    "avatar"
+  ],
+  "aesthetic_family": "flat-minimal",
+  "tags": [
+    "light-mode",
+    "mobile",
+    "b2c"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "#FFFFFF",
+      "surface": "#FFFFFF",
+      "text_primary": "#000000",
+      "text_secondary": "#6B7280",
+      "accent": "#1E90FF"
+    },
+    "radius": {
+      "containers": "12px",
+      "buttons": "9999px"
+    },
+    "shadows": {
+      "default": "0 2px 4px rgba(0,0,0,0.04)"
+    },
+    "spacing": {
+      "base_unit": "8px",
+      "container_padding": "16px",
+      "element_gap": "8px"
+    },
+    "typography": {
+      "heading_weight": "600",
+      "body_weight": "400",
+      "heading_size": "20px",
+      "body_size": "14px",
+      "line_height": "1.4",
+      "font_style": "humanist-sans"
+    }
+  },
+  "atoms": [
+    {
+      "type": "card",
+      "name": "Visual Card",
+      "description": "A card with rounded corners and a subtle shadow, featuring an image and text.",
+      "css": "border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); background-color: #FFFFFF; padding: 16px;"
+    },
+    {
+      "type": "button",
+      "name": "Pill Button",
+      "description": "A button with a pill shape and a light background.",
+      "css": "border-radius: 9999px; padding: 8px 16px; background-color: #F3F4F6; color: #000000; border: none; font-size: 14px; font-weight: 500;"
+    },
+    {
+      "type": "typography",
+      "name": "Section Header",
+      "description": "A slightly larger, bolder text used for section titles.",
+      "css": "font-size: 16px; font-weight: 600; color: #000000;"
+    },
+    {
+      "type": "input",
+      "name": "Bottom Sheet Input",
+      "description": "An input field designed for bottom sheets with rounded corners and a subtle border.",
+      "css": "border-radius: 9999px; padding: 12px 16px; border: 1px solid #D1D5DB; font-size: 14px;"
+    }
+  ],
+  "code": {
+    "css": ".container { display: flex; flex-direction: column; gap: 16px; padding: 16px; background-color: #FFFFFF; } .card { border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); background-color: #FFFFFF; padding: 16px; } .pill-button { border-radius: 9999px; padding: 8px 16px; background-color: #F3F4F6; color: #000000; border: none; font-size: 14px; font-weight: 500; }",
+    "tailwind": "flex flex-col gap-4 p-4 bg-white rounded-xl shadow-md"
+  },
+  "usage": {
+    "best_for": [
+      "Personal dashboards",
+      "Mobile home screens",
+      "Task management apps",
+      "Content discovery feeds"
+    ],
+    "avoid_for": [
+      "Data-heavy dashboards",
+      "Complex settings panels",
+      "Marketing landing pages",
+      "Applications requiring high visual contrast"
+    ]
+  },
+  "source": {
+    "arena_id": 34128258,
+    "arena_url": "https://www.are.na/block/34128258",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIzNDEyODI1OC9vcmlnaW5hbF82ZTRjZmZhMzU1ZWNiZmMzN2U5MjAzODUyMzkxM2M3Zi5qcGciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==?bc=0",
+    "title": "img_4156.jpeg"
+  },
+  "extracted_at": "2025-12-19T07:25:51.718Z",
+  "extraction_version": "1.0.0"
+}

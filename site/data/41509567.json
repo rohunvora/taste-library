@@ -1,0 +1,102 @@
+{
+  "id": "41509567",
+  "name": "Agritech Data Card",
+  "description": "A clean data card design for displaying agricultural metrics, emphasizing clarity and readability.",
+  "screen_type": "dashboard",
+  "component_types": [
+    "card",
+    "data-display",
+    "chart"
+  ],
+  "aesthetic_family": "flat-minimal",
+  "tags": [
+    "light-mode",
+    "desktop",
+    "b2b",
+    "agritech",
+    "data-visualization"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "#F7F7F7",
+      "surface": "#FFFFFF",
+      "text_primary": "#212121",
+      "text_secondary": "#757575",
+      "accent": "#4CAF50"
+    },
+    "radius": {
+      "containers": "12px",
+      "buttons": "8px"
+    },
+    "shadows": {
+      "default": "0 2px 4px rgba(0,0,0,0.08)"
+    },
+    "spacing": {
+      "base_unit": "8px",
+      "container_padding": "16px",
+      "element_gap": "8px"
+    },
+    "typography": {
+      "heading_weight": "600",
+      "body_weight": "400",
+      "heading_size": "20px",
+      "body_size": "14px",
+      "line_height": "1.4",
+      "font_style": "humanist-sans"
+    }
+  },
+  "atoms": [
+    {
+      "type": "surface",
+      "name": "Rounded Card",
+      "description": "White card with subtle shadow and rounded corners.",
+      "css": "background-color: #FFFFFF; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); padding: 16px;"
+    },
+    {
+      "type": "typography",
+      "name": "Metric Heading",
+      "description": "Bold heading for displaying key metrics.",
+      "css": "font-size: 20px; font-weight: 600; color: #212121;"
+    },
+    {
+      "type": "typography",
+      "name": "Label Text",
+      "description": "Smaller, muted text for labels and descriptions.",
+      "css": "font-size: 14px; color: #757575;"
+    },
+    {
+      "type": "chart",
+      "name": "Area Chart",
+      "description": "Line chart with filled area, using a gradient to indicate data range.",
+      "css": "/* Placeholder - requires actual chart library implementation */"
+    }
+  ],
+  "code": {
+    "css": ".data-card { background-color: #FFFFFF; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); padding: 16px; } .metric-heading { font-size: 20px; font-weight: 600; color: #212121; } .label-text { font-size: 14px; color: #757575; }",
+    "tailwind": "rounded-lg shadow-md bg-white p-4 text-gray-700"
+  },
+  "usage": {
+    "best_for": [
+      "Displaying key performance indicators (KPIs)",
+      "Presenting data in a clear and concise manner",
+      "Comparing data over time",
+      "Highlighting trends and patterns",
+      "Mobile-first dashboards"
+    ],
+    "avoid_for": [
+      "Complex data visualizations requiring advanced charting libraries",
+      "Situations where visual flair is more important than data clarity",
+      "Dashboards with very high data density",
+      "When a dark theme is required",
+      "When needing to show many different types of data at once"
+    ]
+  },
+  "source": {
+    "arena_id": 41509567,
+    "arena_url": "https://www.are.na/block/41509567",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiI0MTUwOTU2Ny9vcmlnaW5hbF9kODA1NDc4YjZiYzE3ZWQwOTEwOGVhMmRlOTEwMDQxNi5wbmciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==?bc=0",
+    "title": "Agrotech Dashboard by Product SAAS for Cansaas on Dribbble"
+  },
+  "extracted_at": "2025-12-19T07:26:59.166Z",
+  "extraction_version": "1.0.0"
+}

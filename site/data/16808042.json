@@ -1,0 +1,103 @@
+{
+  "id": "16808042",
+  "name": "Dark Analytics Dashboard",
+  "description": "A dark-themed dashboard layout featuring data visualizations, lists, and key metrics, designed for at-a-glance performance monitoring.",
+  "screen_type": "dashboard",
+  "component_types": [
+    "navigation",
+    "card",
+    "data-display",
+    "chart",
+    "list"
+  ],
+  "aesthetic_family": "dark-premium",
+  "tags": [
+    "dark-mode",
+    "desktop",
+    "b2b",
+    "analytics"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "#121212",
+      "surface": "#1E1E1E",
+      "text_primary": "#FFFFFF",
+      "text_secondary": "#A0A0A0",
+      "accent": "#03DAC6"
+    },
+    "radius": {
+      "containers": "8px",
+      "buttons": "4px"
+    },
+    "shadows": {
+      "default": "0 2px 4px rgba(0,0,0,0.2)"
+    },
+    "spacing": {
+      "base_unit": "8px",
+      "container_padding": "16px",
+      "element_gap": "8px"
+    },
+    "typography": {
+      "heading_weight": "600",
+      "body_weight": "400",
+      "heading_size": "20px",
+      "body_size": "14px",
+      "line_height": "1.4",
+      "font_style": "geometric-sans"
+    }
+  },
+  "atoms": [
+    {
+      "type": "surface",
+      "name": "Dark Card",
+      "description": "A dark surface with subtle shadow for content grouping.",
+      "css": "background-color: #1E1E1E; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); padding: 16px;"
+    },
+    {
+      "type": "typography",
+      "name": "Primary Text",
+      "description": "White text for primary content.",
+      "css": "color: #FFFFFF; font-weight: 600; font-size: 16px;"
+    },
+    {
+      "type": "typography",
+      "name": "Secondary Text",
+      "description": "Gray text for muted labels and descriptions.",
+      "css": "color: #A0A0A0; font-size: 12px; line-height: 1.4;"
+    },
+    {
+      "type": "button",
+      "name": "Small Text Button",
+      "description": "A small button with minimal styling.",
+      "css": "background-color: transparent; border: 1px solid #A0A0A0; color: #A0A0A0; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer;"
+    }
+  ],
+  "code": {
+    "css": ".dashboard-container { background-color: #121212; color: #FFFFFF; font-family: sans-serif; padding: 20px; } .card { background-color: #1E1E1E; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); padding: 16px; margin-bottom: 16px; } .heading { font-size: 20px; font-weight: 600; margin-bottom: 8px; } .text-secondary { color: #A0A0A0; font-size: 14px; }",
+    "tailwind": "bg-gray-900 text-white font-sans p-5 rounded-lg shadow-md"
+  },
+  "usage": {
+    "best_for": [
+      "Data-heavy dashboards",
+      "Internal analytics tools",
+      "Applications requiring a focused, distraction-free environment",
+      "Situations where eye strain is a concern",
+      "Displaying key performance indicators (KPIs)"
+    ],
+    "avoid_for": [
+      "Marketing websites",
+      "Applications targeting a wide audience with varying visual preferences",
+      "Situations where visual hierarchy needs to be immediately apparent",
+      "Designs requiring a playful or energetic feel",
+      "User interfaces with complex interactions"
+    ]
+  },
+  "source": {
+    "arena_id": 16808042,
+    "arena_url": "https://www.are.na/block/16808042",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIxNjgwODA0Mi9vcmlnaW5hbF8xZjViYTM3NzEwZDFlZDIzYjlmODE3Zjk1ZTU1MzM4ZS5wbmciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjEyMDAsImhlaWdodCI6MTIwMCwiZml0IjoiaW5zaWRlIiwid2l0aG91dEVubGFyZ2VtZW50Ijp0cnVlfSwid2VicCI6eyJxdWFsaXR5Ijo3NX0sImpwZWciOnsicXVhbGl0eSI6NzV9LCJyb3RhdGUiOm51bGx9fQ==?bc=0",
+    "title": "14900a13da086aea1962c7.png"
+  },
+  "extracted_at": "2025-12-19T07:27:28.630Z",
+  "extraction_version": "1.0.0"
+}

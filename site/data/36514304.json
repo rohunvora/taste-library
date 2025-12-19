@@ -1,0 +1,93 @@
+{
+  "id": "36514304",
+  "name": "Vault Prompt Card",
+  "description": "A card displaying a prompt within a mobile app, designed for a personal vault or journal-like application.",
+  "screen_type": "mobile-screen",
+  "component_types": [
+    "card",
+    "button",
+    "data-display"
+  ],
+  "aesthetic_family": "soft-gradient",
+  "tags": [
+    "mobile",
+    "b2c",
+    "journal",
+    "light-mode"
+  ],
+  "tokens": {
+    "colors": {
+      "background": "#F5FAF7",
+      "surface": "#E2F5EC",
+      "text_primary": "#212121",
+      "text_secondary": "#757575",
+      "accent": "#388E3C"
+    },
+    "radius": {
+      "containers": "12px",
+      "buttons": "8px"
+    },
+    "shadows": {
+      "default": "0 2px 4px rgba(0,0,0,0.08)"
+    },
+    "spacing": {
+      "base_unit": "8px",
+      "container_padding": "16px",
+      "element_gap": "8px"
+    },
+    "typography": {
+      "heading_weight": "600",
+      "body_weight": "400",
+      "heading_size": "18px",
+      "body_size": "14px",
+      "line_height": "1.4",
+      "font_style": "humanist-sans"
+    }
+  },
+  "atoms": [
+    {
+      "type": "surface",
+      "name": "Soft Green Card",
+      "description": "A card with a light green background and rounded corners, providing a gentle visual separation.",
+      "css": "background-color: #E2F5EC; border-radius: 12px; padding: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.08);"
+    },
+    {
+      "type": "button",
+      "name": "Subtle Action Button",
+      "description": "A button with a light background, rounded corners, and subtle text, designed for secondary actions.",
+      "css": "background-color: #FFFFFF; border-radius: 8px; padding: 8px 12px; color: #212121; font-size: 14px; font-weight: 400; border: none; cursor: pointer;"
+    },
+    {
+      "type": "typography",
+      "name": "Muted Body Text",
+      "description": "Body text with a slightly muted color, providing readability without being overly dominant.",
+      "css": "color: #757575; font-size: 14px; line-height: 1.4;"
+    }
+  ],
+  "code": {
+    "css": ".prompt-card { background-color: #E2F5EC; border-radius: 12px; padding: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); } .action-button { background-color: #FFFFFF; border-radius: 8px; padding: 8px 12px; color: #212121; font-size: 14px; font-weight: 400; border: none; cursor: pointer; }",
+    "tailwind": "bg-green-100 rounded-lg p-4 shadow-sm text-sm text-gray-600"
+  },
+  "usage": {
+    "best_for": [
+      "Displaying prompts or questions in a journaling app",
+      "Presenting contextual information within a mobile interface",
+      "Highlighting user-specific content in a personalized feed",
+      "Creating a calm and inviting user experience"
+    ],
+    "avoid_for": [
+      "High-priority alerts or critical actions",
+      "Data-dense dashboards requiring maximum information density",
+      "Designs requiring a strong sense of urgency or importance",
+      "Dark mode interfaces where the light background would be jarring"
+    ]
+  },
+  "source": {
+    "arena_id": 36514304,
+    "arena_url": "https://www.are.na/block/36514304",
+    "image_url": "https://images.are.na/eyJidWNrZXQiOiJhcmVuYV9pbWFnZXMiLCJrZXkiOiIzNjUxNDMwNC9vcmlnaW5hbF83Y2E2NzUyYzNhYjkwMmE5MjAyNTA1MDctMi0xMHZuMHEucG5nIiwiZWRpdHMiOnsicmVzaXplIjp7IndpZHRoIjoxMjAwLCJoZWlnaHQiOjEyMDAsImZpdCI6Imluc2lkZSIsIndpdGhvdXRFbmxhcmdlbWVudCI6dHJ1ZX0sIndlYnAiOnsicXVhbGl0eSI6NzV9LCJqcGVnIjp7InF1YWxpdHkiOjc1fSwicm90YXRlIjpudWxsfX0=?bc=0",
+    "title": "Playground for your ideas, bookmarks and work. • Laravel"
+  },
+  "extracted_at": "2025-12-19T07:25:00.484Z",
+  "extraction_version": "1.0.0"
+}
