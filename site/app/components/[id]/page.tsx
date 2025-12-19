@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { getComponent, getAllComponents } from "@/lib/components";
+import { getComponent, getAllComponents, type DesignTokens } from "@/lib/components";
 import { CopyButton } from "@/components/copy-button";
 import { 
   ComponentComposition,
@@ -365,7 +365,7 @@ function LiveAtomCard({
   tokens 
 }: { 
   atom: { type: string; name: string; description: string; css: string };
-  tokens: ReturnType<typeof getComponent>['tokens'];
+  tokens: DesignTokens;
 }) {
   const style = cssToStyleObject(atom.css);
   
