@@ -6,7 +6,9 @@ A universal checklist for ensuring any interface has crisp readability, proper s
 
 ## How to Use This Document
 
-**For Cursor Agent:** Use the prompt in `PROMPT_UX_AUDIT_V2.md` (two-phase audit: compositional first, then technical).
+**For Cursor Agent:** Use the prompt in `prompts/audit/UX_AUDIT.md` (two-phase audit: compositional first, then technical).
+
+**For specific problems:** Use the repair prompts in `prompts/fix/` (e.g., FIX_HIERARCHY.md, FIX_CONTRAST.md).
 
 **Quick version:**
 > "Audit this interface in TWO PHASES (do Phase 1 first):

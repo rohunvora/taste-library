@@ -72,15 +72,22 @@ A framework for ensuring ANY interface has proper readability, sizing, and compo
 | File | Purpose |
 |------|---------|
 | `UX_FOUNDATIONS.md` | Complete reference: contrast ratios, type scales, spacing systems, touch targets |
-| `PROMPT_UX_AUDIT_V3.md` | **Ready-to-use prompt** — paste into Cursor to audit/fix any interface |
+| `prompts/audit/UX_AUDIT.md` | **Full audit prompt** — paste into Cursor to audit/fix any interface |
 | `CURSORRULES_UX_FOUNDATIONS.md` | Snippet for your `.cursorrules` file |
 
-**The V3 prompt catches:**
-- Weak visual hierarchy ("everything looks the same")
-- Poor contrast (especially warm-on-warm color combos)
-- Monotonous spacing (no rhythm between sections)
-- Unclear CTAs (buttons that don't stand out)
-- Mobile composition issues
+### 🔧 Repair Prompts (NEW)
+
+Symptom-based prompts for fixing specific UX problems. Paste when you see the symptom:
+
+| Prompt | When to Use |
+|--------|-------------|
+| `prompts/fix/FIX_HIERARCHY.md` | Everything looks the same weight/importance |
+| `prompts/fix/FIX_SPACING.md` | Page feels cramped, floating, or monotonous |
+| `prompts/fix/FIX_CONTRAST.md` | Text is hard to read, looks washed out |
+| `prompts/fix/FIX_MOBILE.md` | Mobile version is cramped or broken |
+| `prompts/fix/FIX_TOUCH_TARGETS.md` | Buttons/inputs are hard to tap |
+| `prompts/fix/FIX_BUTTONS.md` | Unclear which button to click |
+| `prompts/fix/FIX_TYPOGRAPHY.md` | Text too small, cramped, or inconsistent |
 
 ### 🎨 Taste Extraction Pipeline
 
@@ -103,11 +110,17 @@ Are.na Channel → Gemini Analysis → Structured Tags → Cursor Rules
 
 ### Use the UX Audit (No Setup Required)
 
-1. Open `PROMPT_UX_AUDIT_V3.md`
+**For a full audit:**
+1. Open `prompts/audit/UX_AUDIT.md`
 2. Copy the entire prompt
 3. Paste into Cursor with your project open
 4. Run in Agent mode
 5. Review and approve the fixes
+
+**For a specific problem:**
+1. Identify your symptom (e.g., "buttons look equal")
+2. Open the matching FIX_*.md file
+3. Paste and run
 
 ### Index Your Own Are.na Channel
 
@@ -133,24 +146,31 @@ cd web && npm install && npm run dev
 
 ```
 arena-refs/
-├── core/                     # Platform-agnostic logic (can be imported anywhere)
+├── core/                     # Platform-agnostic logic
 │   ├── arena-client.ts       # Are.na API wrapper
 │   ├── matcher.ts            # Image → reference matching
 │   └── classifier.ts         # Block classification
 │
+├── prompts/                  # All AI prompts, organized by purpose
+│   ├── audit/                # Full interface audits
+│   │   └── UX_AUDIT.md       # Two-phase composition + technical audit
+│   ├── fix/                  # Symptom-based repair prompts
+│   │   ├── FIX_HIERARCHY.md  # Weak visual hierarchy
+│   │   ├── FIX_SPACING.md    # Spacing issues
+│   │   ├── FIX_CONTRAST.md   # Readability/contrast
+│   │   ├── FIX_MOBILE.md     # Mobile responsiveness
+│   │   ├── FIX_TOUCH_TARGETS.md  # Small tap targets
+│   │   ├── FIX_BUTTONS.md    # Button hierarchy
+│   │   └── FIX_TYPOGRAPHY.md # Typography issues
+│   └── extraction/           # Component/pattern extraction
+│       ├── screenshot-to-code.md
+│       └── component-extraction-v2.md
+│
 ├── web/                      # Next.js web app
-│   ├── app/page.tsx          # Reference Matcher (home)
-│   ├── app/classify/         # Block Classifier
-│   └── lib/theme.ts          # Design tokens
-│
 ├── cli/                      # CLI tools
-│   ├── index-blocks.ts       # Index blocks with AI tags
-│   └── anti-patterns.ts      # Extract anti-patterns
-│
 ├── taste-profiles/           # Generated indexes (gitignored)
 │
-├── UX_FOUNDATIONS.md         # Universal readability/sizing reference
-├── PROMPT_UX_AUDIT_V3.md     # Ready-to-use audit prompt
+├── UX_FOUNDATIONS.md         # Complete reference document
 └── CURSORRULES_UX_FOUNDATIONS.md  # .cursorrules snippet
 ```
 
@@ -173,7 +193,7 @@ Full taxonomy in [TAGS.md](./TAGS.md).
 
 ## The UX Audit Prompt Explained
 
-The `PROMPT_UX_AUDIT_V3.md` is a two-phase audit:
+The `prompts/audit/UX_AUDIT.md` is a two-phase audit:
 
 **Phase 1: Composition (Do First)**
 - Visual hierarchy — is there a clear focal point?
