@@ -253,64 +253,9 @@ GEMINI_API_KEY=     # For image analysis
 
 ## 🤖 Claude Code Skills
 
-This repo includes 22 Claude Code skills in `.claude/skills/`. Skills are modular packages that extend Claude's capabilities with specialized knowledge and workflows.
+Claude Code skills for this project have been moved to a separate repo:
 
-### Context Engineering (9 skills)
-
-| Skill | Purpose |
-|-------|---------|
-| `advanced-evaluation` | LLM-as-Judge techniques: direct scoring, pairwise comparison, bias mitigation |
-| `context-compression` | Summarization strategies for long-running agent sessions |
-| `context-degradation` | Recognize and mitigate failure patterns (lost-in-middle, poisoning, distraction) |
-| `context-fundamentals` | Core concepts of context anatomy in agent systems |
-| `context-optimization` | Compaction, masking, caching strategies to extend effective context |
-| `evaluation` | Assessment frameworks for testing agent performance |
-| `memory-systems` | Short-term, long-term, and graph-based memory architectures |
-| `multi-agent-patterns` | Orchestrator, peer-to-peer, hierarchical agent architectures |
-| `tool-design` | Design tools that agents can use effectively |
-
-### UX/Design (6 skills)
-
-| Skill | Purpose |
-|-------|---------|
-| `build-design-system` | Design Graph methodology: scales → components → variants → themes |
-| `fix-hierarchy` | Apply Von Restorff, Serial Position, Prägnanz to fix visual hierarchy |
-| `fix-spacing` | Apply Laws of Proximity, Common Region, Connectedness to fix spacing |
-| `improve-flow` | Apply Peak-End Rule, Goal-Gradient, Zeigarnik Effect to improve user flow |
-| `structure-app` | Object-Oriented UX for structuring app information architecture |
-| `ui-density` | Matt Ström's 4-dimensional framework for analyzing UI density |
-
-### Workflow (4 skills)
-
-| Skill | Purpose |
-|-------|---------|
-| `changelog-generator` | Transform git commits into user-friendly release notes |
-| `extract-insights` | Extract insights from Are.na channels and curated reference collections |
-| `reframe` | Reframe stuck problems using WHO/WHERE/WHAT shifts and inversion |
-| `spec-first` | Enforce spec → plan → execute → verify loop before writing code |
-
-### Development (2 skills)
-
-| Skill | Purpose |
-|-------|---------|
-| `html-tools` | Build single-file browser apps without React or build steps |
-| `prompt-engineering` | Agent prompting patterns, persuasion principles, context management |
-
-### Meta (1 skill)
-
-| Skill | Purpose |
-|-------|---------|
-| `skill-creator` | Guide for creating new Claude Code skills |
-
-### Using Skills
-
-Skills activate automatically when relevant. To use them manually:
-
-```
-/skill-name
-```
-
-Or reference them in conversation: "Use the spec-first approach for this feature."
+**[rohunvora/my-claude-skills](https://github.com/rohunvora/my-claude-skills)** — 22 skills for context engineering, UX design, and development workflows.
 
 ---
 
