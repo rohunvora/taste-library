@@ -113,6 +113,15 @@ export class ArenaClient {
   }
 
   /**
+   * Update a channel's settings (title, status, etc.)
+   */
+  async updateChannel(slug: string, updates: { title?: string; status?: 'public' | 'closed' | 'private' }): Promise<ArenaChannel> {
+    const arena = this.arena as any;
+    const channel = await arena._req('PUT', `channels/${slug}`, updates);
+    return channel as ArenaChannel;
+  }
+
+  /**
    * Add an existing block to a channel (creates a connection)
    * Note: The are.na npm package doesn't support this directly,
    * so we use the underlying axios instance
